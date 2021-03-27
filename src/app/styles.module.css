@@ -1,0 +1,10 @@
+.chartContainer {
+  width: 100vw;
+  height: 90vh;
+  padding: 16px;
+}
+
+.checkboxContainer {
+  display: flex;
+  flex-flow: column wrap;
+}
