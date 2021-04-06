@@ -32,7 +32,7 @@ export function useGetCharMatrixData() {
         id: index,
         t: singleNode.name,
         c: chooseColor(singleNode.group),
-        data: singleNode.group,
+        d: singleNode.group,
       };
     });
 
@@ -46,7 +46,7 @@ export function useGetCharMatrixData() {
         t: singleLink.value,
         t1: singleLink.source,
         t2: singleLink.target,
-        data: { frequency: singleLink.value, checked: true },
+        d: { frequency: singleLink.value, checked: true },
         w: singleLink.value,
       };
     });

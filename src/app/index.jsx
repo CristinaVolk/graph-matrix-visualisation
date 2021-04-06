@@ -1,5 +1,5 @@
 import "keylines";
-import React, { useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Chart } from "../react-keylines";
 
 import { useComponent } from "./hook";
@@ -8,7 +8,7 @@ import styles from "./styles.module.css";
 import { useFilterLinks } from "./useFilterLinks";
 
 const App = () => {
-  const { chart, loadedChart, clickHandler } = useComponent();
+  const { chart, loadedChart, clickNodeHandler } = useComponent();
 
   const {
     loading,
@@ -16,61 +16,117 @@ const App = () => {
     lowFrequentCheckBox,
     middleFrequentCheckBox,
     highFrequentCheckBox,
+    setChartContent,
   } = useFilterLinks();
 
-  // const selectMaxLinkedNodes = chartContent.sort((a, b) => a - b);
-
-  const linksToArrange =
-    chartContent &&
-    chartContent.items.filter(
-      (item) => item.type === "link" && item.data.checked === true,
-    );
-
-  const sortedLinks = linksToArrange.sort(
-    (a, b) => b.data.frequency - a.data.frequency,
-  );
-
-  // console.log(
-  //   sortedLinks[1],
-  //   chartContent.items.find((item) => item.type === "node" && item.id === 26),
-  // );
+  const [checkMaxFrequency, setCheckMaxFrequency] = useState(false);
 
   const doLayout = useCallback(() => {
-    return (
-      sortedLinks.length &&
-      chart
-        .layout("organic", {
-          fit: true,
-          animate: true,
-          time: 600,
-          tidy: true,
-          spacing: "stretched",
-          top: [sortedLinks[1].id1, sortedLinks[1].id2],
-        })
-        .then(() => {})
+    return chart
+      .layout("organic", {
+        consistent: true,
+        packing: "adaptive",
+        animate: true,
+        time: 900,
+        tidy: true,
+        spacing: "stretched",
+        tightness: 2,
+      })
+      .then(() => {});
+  }, [chart]);
+
+  const findNodeIdsWithMaxFrequency = () => {
+    const links = chartContent.items.filter(
+      (item) => item.type === "link" && item.d.checked,
     );
-  }, [chart, sortedLinks]);
+    const sortedLinks = links.sort(
+      (current, next) => next.d.frequency - current.d.frequency,
+    );
+
+    const nodeIds = sortedLinks
+      .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
+      .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
+      .flat();
+
+    console.log(
+      sortedLinks.filter(
+        (link) => link.d.frequency === sortedLinks[0].d.frequency,
+      ),
+    );
+
+    console.log(nodeIds);
+
+    return nodeIds;
+  };
+
+  const applyHalo = (nodeIdsWithMaxFrequency) => {
+    if (chartContent) {
+      return chartContent.items.map((item) => {
+        if (item.type === "node" && nodeIdsWithMaxFrequency.includes(item.id)) {
+          console.log(item);
+          return {
+            ...item,
+            ha0: {
+              c: "rgb(112, 234, 255)",
+              r: 50,
+              w: 30,
+            },
+          };
+        } else {
+          return { ...item };
+        }
+      });
+    }
+  };
+
+  const removeHalo = (nodeIdsWithMaxFrequency) => {
+    return chartContent.items.map((item) => {
+      if (item.type === "node") {
+        console.log(item);
+        delete item.ha0;
+        return item;
+      }
+      return item;
+    });
+  };
+
+  const onChangeMaxFrequency = (event) => {
+    console.log(event.target.checked);
+    setCheckMaxFrequency(event.target.checked);
+    let updatedChartContent = {};
+    const nodeIdsWithMaxFrequency = findNodeIdsWithMaxFrequency();
+    if (event.target.checked) {
+      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency);
+    } else {
+      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency);
+    }
+
+    console.log(updatedChartContent);
+
+    setChartContent((prevState) => {
+      return {
+        ...prevState,
+        items: updatedChartContent,
+      };
+    });
+  };
+
+  const maxFrequentCheckBox = {
+    title: "Show maX Frequency",
+    boxName: "maxFrequency",
+    checked: checkMaxFrequency,
+    handleChange: onChangeMaxFrequency,
+  };
 
   useEffect(() => {
     if (chart !== null) {
-      chart.filter((item) => item.data.checked === true, { type: "link" });
+      //chart.filter((item) => item.d.checked === true, { type: "link" });
+
       doLayout();
     }
 
     return () => {};
   }, [chart, chartContent, doLayout]);
-
-  // chart
-  //   .arrange("circle", idssToArrange, {
-  //     fit: true,
-  //     animate: true,
-  //     time: 1000,
-  //     position: "tidy",
-  //     tightness: 5,
-  //   })
-  //   .then(() => {
-  //     console.log("arr");
-  //   });
 
   return (
     !loading && (
@@ -79,12 +135,14 @@ const App = () => {
           data={!loading && chartContent}
           ready={loadedChart}
           containerClassName={styles.chartContainer}
-          click={clickHandler}
+          click={clickNodeHandler}
         />
         <div className={styles.checkboxContainer}>
           <Checkbox checkbox={lowFrequentCheckBox} />
           <Checkbox checkbox={middleFrequentCheckBox} />
           <Checkbox checkbox={highFrequentCheckBox} />
+
+          <Checkbox checkbox={maxFrequentCheckBox} />
         </div>
       </>
     )

@@ -23,7 +23,7 @@ export function useComponent() {
     setChart(chart);
   }, []);
 
-  const clickHandler = useCallback(
+  const clickNodeHandler = useCallback(
     ({ id }) => {
       if (chart.getItem(id)) {
         const clickedItem = chart.getItem(id);
@@ -34,7 +34,7 @@ export function useComponent() {
         chart.foreground(
           (node) => node.id === id || neighbours.includes(node.id),
         );
-      } else {
+
         chart.foreground(() => true);
       }
     },
@@ -46,7 +46,7 @@ export function useComponent() {
     loading,
     chart,
     loadedChart,
-    clickHandler,
+    clickNodeHandler,
     setChartContent,
   };
 }

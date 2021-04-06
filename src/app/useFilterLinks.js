@@ -14,10 +14,13 @@ export function useFilterLinks() {
     return chartContent.items.map((item) => {
       if (
         item.type === "link" &&
-        item.data.frequency >= options.from &&
-        item.data.frequency < options.to
+        item.d.frequency >= options.from &&
+        item.d.frequency < options.to
       ) {
-        return { ...item, data: { ...item.data, checked: true } };
+        return {
+          ...item,
+          d: { ...item.d, checked: true },
+        };
       }
       return { ...item };
     });
@@ -27,25 +30,28 @@ export function useFilterLinks() {
     return chartContent.items.map((item) => {
       if (
         item.type === "link" &&
-        item.data.frequency >= options.from &&
-        item.data.frequency < options.to
+        item.d.frequency >= options.from &&
+        item.d.frequency < options.to
       ) {
-        return { ...item, data: { ...item.data, checked: false } };
+        return {
+          ...item,
+          d: { ...item.d, checked: false },
+        };
       }
       return { ...item };
     });
   };
 
   const filterByFrequency = (event, options) => {
-    let filteredLowFreqLinks = [];
+    let filteredFreqLinks = [];
     if (event.target.checked) {
-      filteredLowFreqLinks = filterFreqLinks(options);
+      filteredFreqLinks = filterFreqLinks(options);
     } else {
-      filteredLowFreqLinks = unfilterFreqLinks(options);
+      filteredFreqLinks = unfilterFreqLinks(options);
     }
 
     setChartContent((prevState) => {
-      return { ...prevState, items: filteredLowFreqLinks };
+      return { ...prevState, items: filteredFreqLinks };
     });
   };
 
@@ -98,5 +104,6 @@ export function useFilterLinks() {
     lowFrequentCheckBox,
     middleFrequentCheckBox,
     highFrequentCheckBox,
+    setChartContent,
   };
 }
