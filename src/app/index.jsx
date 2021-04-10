@@ -19,7 +19,10 @@ const App = () => {
     setChartContent,
   } = useFilterLinks();
 
-  const [checkMaxFrequency, setCheckMaxFrequency] = useState(false);
+  const [checkMaxMinFrequency, setCheckMaxMinFrequency] = useState({
+    max: false,
+    min: false,
+  });
 
   const doLayout = useCallback(() => {
     return chart
@@ -48,13 +51,25 @@ const App = () => {
       .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
       .flat();
 
-    console.log(
-      sortedLinks.filter(
-        (link) => link.d.frequency === sortedLinks[0].d.frequency,
-      ),
+    return nodeIds;
+  };
+
+  const findNodeIdsWithMinFrequency = () => {
+    const links = chartContent.items.filter(
+      (item) => item.type === "link" && item.d.checked,
+    );
+    const sortedLinks = links.sort(
+      (current, next) => current.d.frequency - next.d.frequency,
     );
 
-    console.log(nodeIds);
+    const nodeIds = sortedLinks
+      .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
+      .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
+      .flat();
+
+    console.log(
+      links.sort((current, next) => current.d.frequency - next.d.frequency),
+    );
 
     return nodeIds;
   };
@@ -79,10 +94,9 @@ const App = () => {
     }
   };
 
-  const removeHalo = (nodeIdsWithMaxFrequency) => {
+  const removeHalo = () => {
     return chartContent.items.map((item) => {
       if (item.type === "node") {
-        console.log(item);
         delete item.ha0;
         return item;
       }
@@ -91,8 +105,11 @@ const App = () => {
   };
 
   const onChangeMaxFrequency = (event) => {
-    console.log(event.target.checked);
-    setCheckMaxFrequency(event.target.checked);
+    setCheckMaxMinFrequency({
+      ...checkMaxMinFrequency,
+      [event.target.name]: event.target.checked,
+    });
+
     let updatedChartContent = {};
     const nodeIdsWithMaxFrequency = findNodeIdsWithMaxFrequency();
     if (event.target.checked) {
@@ -101,7 +118,27 @@ const App = () => {
       updatedChartContent = removeHalo(nodeIdsWithMaxFrequency);
     }
 
-    console.log(updatedChartContent);
+    setChartContent((prevState) => {
+      return {
+        ...prevState,
+        items: updatedChartContent,
+      };
+    });
+  };
+
+  const onChangeMinFrequency = (event) => {
+    setCheckMaxMinFrequency({
+      ...checkMaxMinFrequency,
+      [event.target.name]: event.target.checked,
+    });
+
+    let updatedChartContent = {};
+    const nodeIdsWithMinFrequency = findNodeIdsWithMinFrequency();
+    if (event.target.checked) {
+      updatedChartContent = applyHalo(nodeIdsWithMinFrequency);
+    } else {
+      updatedChartContent = removeHalo(nodeIdsWithMinFrequency);
+    }
 
     setChartContent((prevState) => {
       return {
@@ -113,14 +150,21 @@ const App = () => {
 
   const maxFrequentCheckBox = {
     title: "Show maX Frequency",
-    boxName: "maxFrequency",
-    checked: checkMaxFrequency,
+    boxName: "max",
+    checked: checkMaxMinFrequency.max,
     handleChange: onChangeMaxFrequency,
+  };
+
+  const minFrequentCheckBox = {
+    title: "Show miN Frequency",
+    boxName: "min",
+    checked: checkMaxMinFrequency.min,
+    handleChange: onChangeMinFrequency,
   };
 
   useEffect(() => {
     if (chart !== null) {
-      //chart.filter((item) => item.d.checked === true, { type: "link" });
+      chart.filter((item) => item.d.checked === true, { type: "link" });
 
       doLayout();
     }
@@ -143,6 +187,7 @@ const App = () => {
           <Checkbox checkbox={highFrequentCheckBox} />
 
           <Checkbox checkbox={maxFrequentCheckBox} />
+          <Checkbox checkbox={minFrequentCheckBox} />
         </div>
       </>
     )

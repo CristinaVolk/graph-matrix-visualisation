@@ -92,7 +92,7 @@ export function useFilterLinks() {
   };
 
   const highFrequentCheckBox = {
-    title: "High: between 9 & 15",
+    title: "High: more than 9",
     boxName: "high",
     checked: checkboxState.high,
     handleChange: checkFrequency,

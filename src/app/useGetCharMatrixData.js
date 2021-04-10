@@ -1,4 +1,6 @@
 import { useState, useCallback } from "react";
+import { v4 as uuidv4 } from "uuid";
+
 import { useHttp } from "../hooks/http.hook";
 import { data } from "../utils/networkData";
 
@@ -25,12 +27,11 @@ export function useGetCharMatrixData() {
 
   const renderContent = useCallback((charMatrixData) => {
     const { nodes, links } = charMatrixData;
-
     const chartNodes = nodes.map((singleNode, index) => {
       return {
         type: "node",
         id: index,
-        t: singleNode.name,
+        t: `${singleNode.name} + ${index}`,
         c: chooseColor(singleNode.group),
         d: singleNode.group,
       };
@@ -39,7 +40,7 @@ export function useGetCharMatrixData() {
     const chartLinks = links.map((singleLink, index) => {
       return {
         type: "link",
-        id: index,
+        id: `link-${uuidv4()}`,
         id1: singleLink.source,
         id2: singleLink.target,
         c: "rgb(0, 0, 26, 0.5)",
