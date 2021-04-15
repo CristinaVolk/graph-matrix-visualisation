@@ -1,11 +1,13 @@
 import "keylines";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Chart } from "../react-keylines";
+import { Grid, Switch, FormGroup, FormControlLabel } from "@material-ui/core/";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
-import { Checkbox } from "../checkbox";
-import styles from "./styles.module.css";
 import { useFilterLinks } from "./useFilterLinks";
+import { Checkbox } from "../checkbox";
+import { debounce } from "../utils/tools";
 
 const App = () => {
   const { chart, loadedChart, clickNodeHandler } = useComponent();
@@ -13,16 +15,14 @@ const App = () => {
   const {
     loading,
     chartContent,
-    lowFrequentCheckBox,
-    middleFrequentCheckBox,
-    highFrequentCheckBox,
-    setChartContent,
+    checkboxState,
+    checkMaxMinFrequency,
+    checkFrequency,
+    onChangeMaxFrequency,
+    onChangeMinFrequency,
   } = useFilterLinks();
 
-  const [checkMaxMinFrequency, setCheckMaxMinFrequency] = useState({
-    max: false,
-    min: false,
-  });
+  const classes = useStyles();
 
   const doLayout = useCallback(() => {
     return chart
@@ -38,160 +38,109 @@ const App = () => {
       .then(() => {});
   }, [chart]);
 
-  const findNodeIdsWithMaxFrequency = () => {
-    const links = chartContent.items.filter(
-      (item) => item.type === "link" && item.d.checked,
-    );
-    const sortedLinks = links.sort(
-      (current, next) => next.d.frequency - current.d.frequency,
-    );
-
-    const nodeIds = sortedLinks
-      .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
-      .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
-      .flat();
-
-    return nodeIds;
-  };
-
-  const findNodeIdsWithMinFrequency = () => {
-    const links = chartContent.items.filter(
-      (item) => item.type === "link" && item.d.checked,
-    );
-    const sortedLinks = links.sort(
-      (current, next) => current.d.frequency - next.d.frequency,
-    );
-
-    const nodeIds = sortedLinks
-      .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
-      .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
-      .flat();
-
-    console.log(
-      links.sort((current, next) => current.d.frequency - next.d.frequency),
-    );
-
-    return nodeIds;
-  };
-
-  const applyHalo = (nodeIdsWithMaxFrequency) => {
-    if (chartContent) {
-      return chartContent.items.map((item) => {
-        if (item.type === "node" && nodeIdsWithMaxFrequency.includes(item.id)) {
-          console.log(item);
-          return {
-            ...item,
-            ha0: {
-              c: "rgb(112, 234, 255)",
-              r: 50,
-              w: 30,
-            },
-          };
-        } else {
-          return { ...item };
-        }
-      });
-    }
-  };
-
-  const removeHalo = () => {
-    return chartContent.items.map((item) => {
-      if (item.type === "node") {
-        delete item.ha0;
-        return item;
-      }
-      return item;
-    });
-  };
-
-  const onChangeMaxFrequency = (event) => {
-    setCheckMaxMinFrequency({
-      ...checkMaxMinFrequency,
-      [event.target.name]: event.target.checked,
-    });
-
-    let updatedChartContent = {};
-    const nodeIdsWithMaxFrequency = findNodeIdsWithMaxFrequency();
-    if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency);
-    } else {
-      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency);
+  useEffect(() => {
+    if (chart !== null) {
+      chart.filter((item) => item.d.checked === true, { type: "link" });
+      doLayout();
     }
 
-    setChartContent((prevState) => {
-      return {
-        ...prevState,
-        items: updatedChartContent,
-      };
-    });
+    return () => {
+      debounce(console.log("end"));
+    };
+  }, [chart, chartContent, doLayout]);
+
+  const lowFrequentCheckBox = {
+    title: "Low: less than 5",
+    boxName: "low",
+    checked: checkboxState.low,
+    handleChange: checkFrequency,
   };
 
-  const onChangeMinFrequency = (event) => {
-    setCheckMaxMinFrequency({
-      ...checkMaxMinFrequency,
-      [event.target.name]: event.target.checked,
-    });
+  const middleFrequentCheckBox = {
+    title: "Middle: between 5 & 9",
+    boxName: "middle",
+    checked: checkboxState.middle,
+    handleChange: checkFrequency,
+  };
 
-    let updatedChartContent = {};
-    const nodeIdsWithMinFrequency = findNodeIdsWithMinFrequency();
-    if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMinFrequency);
-    } else {
-      updatedChartContent = removeHalo(nodeIdsWithMinFrequency);
-    }
-
-    setChartContent((prevState) => {
-      return {
-        ...prevState,
-        items: updatedChartContent,
-      };
-    });
+  const highFrequentCheckBox = {
+    title: "High: more than 9",
+    boxName: "high",
+    checked: checkboxState.high,
+    handleChange: checkFrequency,
   };
 
   const maxFrequentCheckBox = {
-    title: "Show maX Frequency",
+    title: "Show nodes with maX Frequency",
     boxName: "max",
     checked: checkMaxMinFrequency.max,
     handleChange: onChangeMaxFrequency,
   };
 
   const minFrequentCheckBox = {
-    title: "Show miN Frequency",
+    title: "Show nodes with miN Frequency",
     boxName: "min",
     checked: checkMaxMinFrequency.min,
     handleChange: onChangeMinFrequency,
   };
 
-  useEffect(() => {
-    if (chart !== null) {
-      chart.filter((item) => item.d.checked === true, { type: "link" });
-
-      doLayout();
-    }
-
-    return () => {};
-  }, [chart, chartContent, doLayout]);
-
   return (
     !loading && (
-      <>
+      <Grid container direction='row' justify='center' alignItems='center'>
         <Chart
           data={!loading && chartContent}
           ready={loadedChart}
-          containerClassName={styles.chartContainer}
+          containerClassName={classes.root}
           click={clickNodeHandler}
         />
-        <div className={styles.checkboxContainer}>
+        <div className={classes.checkboxContainer}>
           <Checkbox checkbox={lowFrequentCheckBox} />
           <Checkbox checkbox={middleFrequentCheckBox} />
           <Checkbox checkbox={highFrequentCheckBox} />
 
-          <Checkbox checkbox={maxFrequentCheckBox} />
-          <Checkbox checkbox={minFrequentCheckBox} />
+          <FormGroup>
+            <FormControlLabel
+              label={maxFrequentCheckBox.title}
+              labelPlacement='start'
+              control={
+                <Switch
+                  checked={maxFrequentCheckBox.checked}
+                  onChange={maxFrequentCheckBox.handleChange}
+                  name={maxFrequentCheckBox.boxName}
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                  color={"secondary"}
+                />
+              }
+            />
+            <FormControlLabel
+              labelPlacement='start'
+              label={minFrequentCheckBox.title}
+              control={
+                <Switch
+                  checked={minFrequentCheckBox.checked}
+                  onChange={minFrequentCheckBox.handleChange}
+                  name={minFrequentCheckBox.boxName}
+                  inputProps={{ "aria-label": "primary checkbox" }}
+                  color={"primary"}
+                />
+              }
+            />
+          </FormGroup>
         </div>
-      </>
+      </Grid>
     )
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: "100vh",
+    width: "70vw",
+  },
+  checkboxContainer: {
+    display: "flex",
+    flexFlow: "column wrap",
+  },
+}));
 
 export default App;
