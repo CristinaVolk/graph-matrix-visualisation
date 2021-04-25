@@ -1,12 +1,13 @@
 import "keylines";
-import React, { useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Chart } from "../react-keylines";
-import { Grid, Switch, FormGroup, FormControlLabel } from "@material-ui/core/";
+import { Grid, FormGroup } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
 import { useFilterLinks } from "./useFilterLinks";
-import { Checkbox } from "../checkbox";
+import { CustomCheckbox } from "../checkbox";
+import { CustomSwitch } from "../switch";
 import { debounce } from "../utils/tools";
 
 const App = () => {
@@ -21,6 +22,8 @@ const App = () => {
     onChangeMaxFrequency,
     onChangeMinFrequency,
   } = useFilterLinks();
+
+  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
 
   const classes = useStyles();
 
@@ -38,22 +41,12 @@ const App = () => {
       .then(() => {});
   }, [chart]);
 
-  useEffect(() => {
-    if (chart !== null) {
-      chart.filter((item) => item.d.checked === true, { type: "link" });
-      doLayout();
-    }
-
-    return () => {
-      debounce(console.log("end"));
-    };
-  }, [chart, chartContent, doLayout]);
-
   const lowFrequentCheckBox = {
     title: "Low: less than 5",
     boxName: "low",
     checked: checkboxState.low,
     handleChange: checkFrequency,
+    disabled: disabledCheckbox,
   };
 
   const middleFrequentCheckBox = {
@@ -61,6 +54,7 @@ const App = () => {
     boxName: "middle",
     checked: checkboxState.middle,
     handleChange: checkFrequency,
+    disabled: disabledCheckbox,
   };
 
   const highFrequentCheckBox = {
@@ -68,21 +62,43 @@ const App = () => {
     boxName: "high",
     checked: checkboxState.high,
     handleChange: checkFrequency,
+    disabled: disabledCheckbox,
   };
 
-  const maxFrequentCheckBox = {
+  const maxFrequentSwitch = {
     title: "Show nodes with maX Frequency",
     boxName: "max",
     checked: checkMaxMinFrequency.max,
     handleChange: onChangeMaxFrequency,
   };
 
-  const minFrequentCheckBox = {
+  const minFrequentSwitch = {
     title: "Show nodes with miN Frequency",
     boxName: "min",
     checked: checkMaxMinFrequency.min,
     handleChange: onChangeMinFrequency,
   };
+
+  useEffect(() => {
+    if (chart !== null) {
+      chart.filter((item) => item.d.checked === true, { type: "link" });
+      doLayout();
+    }
+
+    if (maxFrequentSwitch.checked || minFrequentSwitch.checked) {
+      setDisabledCheckbox(true);
+    }
+
+    return () => {
+      debounce(setDisabledCheckbox(false));
+    };
+  }, [
+    chart,
+    chartContent,
+    doLayout,
+    maxFrequentSwitch.checked,
+    minFrequentSwitch.checked,
+  ]);
 
   return (
     !loading && (
@@ -93,38 +109,18 @@ const App = () => {
           containerClassName={classes.root}
           click={clickNodeHandler}
         />
-        <div className={classes.checkboxContainer}>
-          <Checkbox checkbox={lowFrequentCheckBox} />
-          <Checkbox checkbox={middleFrequentCheckBox} />
-          <Checkbox checkbox={highFrequentCheckBox} />
 
-          <FormGroup>
-            <FormControlLabel
-              label={maxFrequentCheckBox.title}
-              labelPlacement='start'
-              control={
-                <Switch
-                  checked={maxFrequentCheckBox.checked}
-                  onChange={maxFrequentCheckBox.handleChange}
-                  name={maxFrequentCheckBox.boxName}
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  color={"secondary"}
-                />
-              }
-            />
-            <FormControlLabel
-              labelPlacement='start'
-              label={minFrequentCheckBox.title}
-              control={
-                <Switch
-                  checked={minFrequentCheckBox.checked}
-                  onChange={minFrequentCheckBox.handleChange}
-                  name={minFrequentCheckBox.boxName}
-                  inputProps={{ "aria-label": "primary checkbox" }}
-                  color={"primary"}
-                />
-              }
-            />
+        <div className={classes.checkboxContainer}>
+          <FormGroup component='fieldset'>
+            <CustomCheckbox checkbox={lowFrequentCheckBox} />
+
+            <CustomCheckbox checkbox={middleFrequentCheckBox} />
+
+            <CustomCheckbox checkbox={highFrequentCheckBox} />
+
+            <CustomSwitch toogler={maxFrequentSwitch} />
+
+            <CustomSwitch toogler={minFrequentSwitch} />
           </FormGroup>
         </div>
       </Grid>

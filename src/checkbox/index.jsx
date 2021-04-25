@@ -1,23 +1,25 @@
-import styles from "./styles.module.css";
+import { FormControlLabel, Checkbox } from "@material-ui/core";
 
-export function Checkbox({ checkbox }) {
-  const { title, checked, handleChange, boxName } = checkbox;
+export function CustomCheckbox({ checkbox }) {
+  const { title, checked, handleChange, boxName, disabled } = checkbox;
 
   const onHandleChange = (event) => {
+    console.log(disabled);
     handleChange(event);
   };
 
   return (
-    <div className={styles.checkboxHolder}>
-      <label className='checkbox'></label>
-      <input
-        checked={checked}
-        name={boxName}
-        id={title}
-        type='checkbox'
-        onChange={onHandleChange}
-      />
-      <div>{title}</div>
-    </div>
+    <FormControlLabel
+      disabled={disabled}
+      control={
+        <Checkbox
+          onChange={onHandleChange}
+          id={title}
+          checked={checked}
+          name={boxName}
+        />
+      }
+      label={title}
+    />
   );
 }
