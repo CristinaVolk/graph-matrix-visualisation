@@ -4,7 +4,6 @@ export function CustomCheckbox({ checkbox }) {
   const { title, checked, handleChange, boxName, disabled } = checkbox;
 
   const onHandleChange = (event) => {
-    console.log(disabled);
     handleChange(event);
   };
 

@@ -3,7 +3,7 @@ import { useComponent } from "./hook";
 import { assending, descending } from "../utils/tools";
 
 export function useFilterLinks() {
-  const { chartContent, loading, setChartContent } = useComponent();
+  const { chart, chartContent, loading, setChartContent } = useComponent();
 
   const [checkboxState, setCheckboxState] = useState({
     low: true,
@@ -94,6 +94,8 @@ export function useFilterLinks() {
       .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
       .flat();
 
+    chart && chart.foreground(nodeIds.map((nodeId) => nodeId));
+
     return nodeIds;
   };
 
@@ -136,7 +138,7 @@ export function useFilterLinks() {
     });
 
     let updatedChartContent = {};
-    const colour = "rgb(112, 234, 255)";
+    const colour = "rgb(255, 112, 112)";
     const nodeIdsWithMaxFrequency = findNodeIdsWithExtremeFrequency("max");
     if (event.target.checked) {
       updatedChartContent = applyHalo(nodeIdsWithMaxFrequency, colour);
@@ -153,7 +155,7 @@ export function useFilterLinks() {
   };
 
   const onChangeMinFrequency = (event) => {
-    const colour = "rgb(255, 112, 112)";
+    const colour = "rgb(112, 234, 255)";
     setCheckMaxMinFrequency({
       ...checkMaxMinFrequency,
       [event.target.name]: event.target.checked,

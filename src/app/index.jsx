@@ -1,13 +1,14 @@
 import "keylines";
 import React, { useState, useEffect, useCallback } from "react";
-import { Chart } from "../react-keylines";
+import { Chart } from "./react-keylines";
 import { Grid, FormGroup } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
 import { useFilterLinks } from "./useFilterLinks";
-import { CustomCheckbox } from "../checkbox";
-import { CustomSwitch } from "../switch";
+import { ChangeLayout } from "../components/ChangeLayout";
+import { CustomCheckbox } from "../components/CustomCheckbox";
+import { CustomSwitch } from "../components/CustomSwitch";
 import { debounce } from "../utils/tools";
 
 const App = () => {
@@ -27,19 +28,22 @@ const App = () => {
 
   const classes = useStyles();
 
-  const doLayout = useCallback(() => {
-    return chart
-      .layout("organic", {
-        consistent: true,
-        packing: "adaptive",
-        animate: true,
-        time: 900,
-        tidy: true,
-        spacing: "stretched",
-        tightness: 2,
-      })
-      .then(() => {});
-  }, [chart]);
+  const doLayout = useCallback(
+    (layoutName) => {
+      return chart
+        .layout(layoutName, {
+          consistent: true,
+          packing: "adaptive",
+          animate: true,
+          time: 1000,
+          tidy: true,
+          spacing: "stretched",
+          tightness: 1,
+        })
+        .then(() => {});
+    },
+    [chart],
+  );
 
   const lowFrequentCheckBox = {
     title: "Low: less than 5",
@@ -66,23 +70,25 @@ const App = () => {
   };
 
   const maxFrequentSwitch = {
-    title: "Show nodes with maX Frequency",
+    title: "Show characters with MAX Frequency",
     boxName: "max",
     checked: checkMaxMinFrequency.max,
     handleChange: onChangeMaxFrequency,
+    color: "primary",
   };
 
   const minFrequentSwitch = {
-    title: "Show nodes with miN Frequency",
+    title: "Show characters with MIN Frequency",
     boxName: "min",
     checked: checkMaxMinFrequency.min,
     handleChange: onChangeMinFrequency,
+    color: "secondary",
   };
 
   useEffect(() => {
     if (chart !== null) {
       chart.filter((item) => item.d.checked === true, { type: "link" });
-      doLayout();
+      doLayout("organic");
     }
 
     if (maxFrequentSwitch.checked || minFrequentSwitch.checked) {
@@ -102,7 +108,13 @@ const App = () => {
 
   return (
     !loading && (
-      <Grid container direction='row' justify='center' alignItems='center'>
+      <Grid
+        container
+        direction='row'
+        justify='center'
+        alignItems='center'
+        wrap='wrap'
+      >
         <Chart
           data={!loading && chartContent}
           ready={loadedChart}
@@ -111,6 +123,8 @@ const App = () => {
         />
 
         <div className={classes.checkboxContainer}>
+          <ChangeLayout changeLayout={doLayout} />
+
           <FormGroup component='fieldset'>
             <CustomCheckbox checkbox={lowFrequentCheckBox} />
 
