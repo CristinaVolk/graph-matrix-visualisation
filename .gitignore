@@ -26,3 +26,5 @@ yarn-error.log*
 src/react-keylines.js
 yarn.lock
 package-lock.json
+src/app/react-keylines.js
+public/icons
