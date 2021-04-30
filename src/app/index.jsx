@@ -1,7 +1,7 @@
 import "keylines";
 import React, { useState, useEffect, useCallback } from "react";
 import { Chart } from "./react-keylines";
-import { Grid, FormGroup, Button } from "@material-ui/core/";
+import { Grid, FormGroup } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
@@ -9,11 +9,8 @@ import { useFilterLinks } from "./useFilterLinks";
 import { ChangeLayout } from "../components/ChangeLayout";
 import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
-import { SimpleDialog } from "../components/Dialog";
-
+import { InformationBox } from "../components/InformationBox";
 import { debounce } from "../utils/tools";
-
-const emails = ["username@gmail.com", "user02@gmail.com"];
 
 const App = () => {
   const { chart, loadedChart } = useComponent();
@@ -32,10 +29,22 @@ const App = () => {
 
   const classes = useStyles();
 
+  const validateLayoutName = (layoutName) => {
+    const allowedLayouts = [
+      "organic",
+      "lens",
+      "sequential",
+      "tweak",
+      "radial",
+      "structural",
+    ];
+    return allowedLayouts.find((item) => item === layoutName);
+  };
+
   const doLayout = useCallback(
     (layoutName) => {
       return chart
-        .layout(layoutName, {
+        .layout(validateLayoutName(layoutName) ? layoutName : "organic", {
           consistent: true,
           packing: "adaptive",
           animate: true,
@@ -45,24 +54,6 @@ const App = () => {
           tightness: 1,
         })
         .then(() => {});
-    },
-    [chart],
-  );
-
-  const clickNodeHandler = useCallback(
-    ({ id }) => {
-      if (chart.getItem(id)) {
-        const clickedItem = chart.getItem(id);
-
-        console.log(clickedItem);
-        handleClickOpen();
-        const neighbours = chart.graph().neighbours(id).nodes;
-        chart.foreground(
-          (node) => node.id === id || neighbours.includes(node.id),
-        );
-
-        chart.foreground(() => true);
-      }
     },
     [chart],
   );
@@ -123,21 +114,31 @@ const App = () => {
   }, [
     chart,
     chartContent,
-    doLayout,
     maxFrequentSwitch.checked,
     minFrequentSwitch.checked,
+    doLayout,
   ]);
 
-  const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
+  const clickNodeHandler = useCallback(
+    ({ id }) => {
+      if (chart.getItem(id)) {
+        setSelectedItem(chart.getItem(id));
+        handleClickOpen();
+      }
+    },
+    [chart],
+  );
+
   const handleClose = (value) => {
     setOpen(false);
-    setSelectedValue(value);
+    setSelectedItem(value);
   };
 
   return (
@@ -157,11 +158,8 @@ const App = () => {
         />
 
         <div>
-          <Button variant='outlined' color='primary' onClick={handleClickOpen}>
-            Open simple dialog
-          </Button>
-          <SimpleDialog
-            selectedValue={selectedValue}
+          <InformationBox
+            selectedItem={selectedItem}
             open={open}
             onClose={handleClose}
           />
@@ -170,7 +168,7 @@ const App = () => {
         <div className={classes.checkboxContainer}>
           <ChangeLayout changeLayout={doLayout} />
 
-          <FormGroup component='fieldset'>
+          <FormGroup component='fieldset' className={classes.formGroup}>
             <CustomCheckbox checkbox={lowFrequentCheckBox} />
 
             <CustomCheckbox checkbox={middleFrequentCheckBox} />
@@ -190,11 +188,19 @@ const App = () => {
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
-    width: "70vw",
+    width: "60vw",
   },
   checkboxContainer: {
     display: "flex",
     flexFlow: "column wrap",
+    alignItems: "center",
+    marginBottom: theme.spacing(6),
+  },
+  formGroup: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "column",
+    marginLeft: theme.spacing(10),
   },
 }));
 

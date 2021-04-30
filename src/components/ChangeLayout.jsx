@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "50%",
+    width: "60%",
     marginBottom: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
@@ -26,7 +26,7 @@ export function ChangeLayout({ changeLayout }) {
   return (
     <div className={classes.root}>
       <Typography gutterBottom color='secondary' variant='h6' align='center'>
-        Choose the layout
+        Choose one of the layouts below to arrange nodes in various ways
       </Typography>
       <ButtonGroup
         orientation='vertical'
