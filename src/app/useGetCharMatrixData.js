@@ -34,6 +34,8 @@ export function useGetCharMatrixData() {
         t: `${singleNode.name} + ${index}`,
         c: chooseColor(singleNode.group),
         d: singleNode.group,
+        bs: "dashed",
+        e: 2,
       };
     });
 

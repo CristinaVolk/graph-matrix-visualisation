@@ -1,7 +1,7 @@
 import "keylines";
 import React, { useState, useEffect, useCallback } from "react";
 import { Chart } from "./react-keylines";
-import { Grid, FormGroup } from "@material-ui/core/";
+import { Grid, FormGroup, Button } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
@@ -9,10 +9,14 @@ import { useFilterLinks } from "./useFilterLinks";
 import { ChangeLayout } from "../components/ChangeLayout";
 import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
+import { SimpleDialog } from "../components/Dialog";
+
 import { debounce } from "../utils/tools";
 
+const emails = ["username@gmail.com", "user02@gmail.com"];
+
 const App = () => {
-  const { chart, loadedChart, clickNodeHandler } = useComponent();
+  const { chart, loadedChart } = useComponent();
 
   const {
     loading,
@@ -41,6 +45,24 @@ const App = () => {
           tightness: 1,
         })
         .then(() => {});
+    },
+    [chart],
+  );
+
+  const clickNodeHandler = useCallback(
+    ({ id }) => {
+      if (chart.getItem(id)) {
+        const clickedItem = chart.getItem(id);
+
+        console.log(clickedItem);
+        handleClickOpen();
+        const neighbours = chart.graph().neighbours(id).nodes;
+        chart.foreground(
+          (node) => node.id === id || neighbours.includes(node.id),
+        );
+
+        chart.foreground(() => true);
+      }
     },
     [chart],
   );
@@ -106,6 +128,18 @@ const App = () => {
     minFrequentSwitch.checked,
   ]);
 
+  const [open, setOpen] = React.useState(false);
+  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedValue(value);
+  };
+
   return (
     !loading && (
       <Grid
@@ -121,6 +155,17 @@ const App = () => {
           containerClassName={classes.root}
           click={clickNodeHandler}
         />
+
+        <div>
+          <Button variant='outlined' color='primary' onClick={handleClickOpen}>
+            Open simple dialog
+          </Button>
+          <SimpleDialog
+            selectedValue={selectedValue}
+            open={open}
+            onClose={handleClose}
+          />
+        </div>
 
         <div className={classes.checkboxContainer}>
           <ChangeLayout changeLayout={doLayout} />

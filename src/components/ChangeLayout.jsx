@@ -4,6 +4,7 @@ import { Button, ButtonGroup, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
+    width: "50%",
     marginBottom: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
@@ -37,8 +38,9 @@ export function ChangeLayout({ changeLayout }) {
           Lens
         </Button>
         <Button onClick={runLayout}>Sequential</Button>
-        <Button onClick={runLayout}>Hierarchy</Button>
         <Button onClick={runLayout}>Tweak</Button>
+        <Button onClick={runLayout}>Radial</Button>
+        <Button onClick={runLayout}>Structural</Button>
       </ButtonGroup>
     </div>
   );
