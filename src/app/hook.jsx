@@ -23,30 +23,11 @@ export function useComponent() {
     setChart(chart);
   }, []);
 
-  const clickNodeHandler = useCallback(
-    ({ id }) => {
-      if (chart.getItem(id)) {
-        const clickedItem = chart.getItem(id);
-
-        console.log(clickedItem);
-
-        const neighbours = chart.graph().neighbours(id).nodes;
-        chart.foreground(
-          (node) => node.id === id || neighbours.includes(node.id),
-        );
-
-        chart.foreground(() => true);
-      }
-    },
-    [chart],
-  );
-
   return {
     chartContent,
     loading,
     chart,
     loadedChart,
-    clickNodeHandler,
     setChartContent,
   };
 }

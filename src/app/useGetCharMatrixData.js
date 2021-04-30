@@ -31,11 +31,9 @@ export function useGetCharMatrixData() {
       return {
         type: "node",
         id: index,
-        t: `${singleNode.name} + ${index}`,
+        t: `${singleNode.name}`,
         c: chooseColor(singleNode.group),
         d: singleNode.group,
-        bs: "dashed",
-        e: 2,
       };
     });
 
@@ -47,8 +45,8 @@ export function useGetCharMatrixData() {
         id2: singleLink.target,
         c: "rgb(0, 0, 26, 0.5)",
         t: singleLink.value,
-        t1: singleLink.source,
-        t2: singleLink.target,
+        t1: chartNodes.find((node) => node.id === singleLink.source).t,
+        t2: chartNodes.find((node) => node.id === singleLink.target).t,
         d: { frequency: singleLink.value, checked: true },
         w: singleLink.value,
       };
