@@ -8,45 +8,14 @@ import {
   ListItemText,
 } from "@material-ui/core/";
 
-export function InformationBox(props) {
-  //extract to the custom hook
-  const { onClose, selectedItem, open } = props;
+import { useComponent } from "./hook";
 
-  const handleClose = () => {
-    onClose(selectedItem);
-  };
-
-  const shapeSelectedItem = (item) =>
-    item.type === "node" ? shapeNode(item) : shapeLink(item);
-
-  const shapeLink = (link) => {
-    return {
-      Type: link.type,
-      ID: link.id,
-      Node_Source_Id: link.id1,
-      Node_Target_Id: link.id2,
-      Node_Source_Name: link.t1,
-      Node_Target_Name: link.t2,
-      Frequency: link.d.frequency,
-      Width: link.w,
-    };
-  };
-
-  const shapeNode = (node) => {
-    return {
-      Type: node.type,
-      ID: node.id,
-      Name: node.t,
-      colour: node.c,
-      GroupNo: node.d,
-      X_Coord: Math.floor(node.x),
-      Y_Coord: Math.floor(node.y),
-    };
-  };
+export function InformationBox({ open, selectedItem, onClose }) {
+  const { shapeSelectedItem } = useComponent();
 
   return (
     <Dialog
-      onClose={handleClose}
+      onClose={() => onClose(selectedItem)}
       aria-labelledby='simple-dialog-title'
       open={open}
     >

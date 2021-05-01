@@ -1,3 +1,5 @@
+import { layouts } from "./appData";
+
 export const assending = (current, next) =>
   current.d.frequency - next.d.frequency;
 
@@ -17,3 +19,6 @@ export const debounce = (fn, timeToWait = 100) => {
     timeoutId = setTimeout(timeoutFn, timeToWait);
   };
 };
+
+export const validateLayoutName = (layoutName) =>
+  layouts.find((item) => item === layoutName);
