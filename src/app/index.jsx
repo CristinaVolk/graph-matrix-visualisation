@@ -11,6 +11,7 @@ import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
 import { debounce } from "../utils/tools";
+import { layouts } from "../utils/appData";
 
 const App = () => {
   const { chart, loadedChart } = useComponent();
@@ -25,24 +26,12 @@ const App = () => {
     onChangeMinFrequency,
   } = useFilterLinks();
 
-  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
-
-  const classes = useStyles();
-
-  const validateLayoutName = (layoutName) => {
-    const allowedLayouts = [
-      "organic",
-      "lens",
-      "sequential",
-      "tweak",
-      "radial",
-      "structural",
-    ];
-    return allowedLayouts.find((item) => item === layoutName);
-  };
+  const validateLayoutName = (layoutName) =>
+    layouts.find((item) => item === layoutName);
 
   const doLayout = useCallback(
     (layoutName) => {
+      setAnimated(true);
       return chart
         .layout(validateLayoutName(layoutName) ? layoutName : "organic", {
           consistent: true,

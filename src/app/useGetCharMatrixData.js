@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { useHttp } from "../hooks/http.hook";
-import { data } from "../utils/networkData";
+import { data } from "../utils/appData";
 
 export function useGetCharMatrixData() {
   const [chartContent, setChartContent] = useState(data);

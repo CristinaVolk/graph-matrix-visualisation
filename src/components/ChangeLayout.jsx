@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, ButtonGroup, Typography } from "@material-ui/core";
+
+import { layouts } from "../utils/appData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "60%",
-    marginBottom: theme.spacing(2),
+    margin: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
     "& > *": {
@@ -17,11 +19,17 @@ const useStyles = makeStyles((theme) => ({
 export function ChangeLayout({ changeLayout }) {
   const classes = useStyles();
 
-  const runLayout = (event) => {
-    console.log(event.target.innerHTML.toLowerCase());
-    const layoutName = event.target.innerHTML.toLowerCase();
-    changeLayout(layoutName);
-  };
+  const runLayout = useCallback(
+    (event) => {
+      console.log(
+        event.target.innerHTML.replace(/(<([^>]+)>)/gi, "").toLowerCase(),
+      );
+      changeLayout(
+        event.target.innerHTML.replace(/(<([^>]+)>)/gi, "").toLowerCase(),
+      );
+    },
+    [changeLayout],
+  );
 
   return (
     <div className={classes.root}>
@@ -34,13 +42,13 @@ export function ChangeLayout({ changeLayout }) {
         aria-label='vertical contained primary button group'
         variant='text'
       >
-        <Button component='button' onClick={runLayout}>
-          Lens
-        </Button>
-        <Button onClick={runLayout}>Sequential</Button>
-        <Button onClick={runLayout}>Tweak</Button>
-        <Button onClick={runLayout}>Radial</Button>
-        <Button onClick={runLayout}>Structural</Button>
+        {layouts.map((singleLayout) => {
+          return (
+            <Button key={singleLayout} component='button' onClick={runLayout}>
+              {singleLayout}
+            </Button>
+          );
+        })}
       </ButtonGroup>
     </div>
   );
