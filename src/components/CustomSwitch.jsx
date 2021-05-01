@@ -1,11 +1,7 @@
 import { FormControlLabel, Switch } from "@material-ui/core";
 
 export function CustomSwitch({ toogler }) {
-  const { title, checked, handleChange, boxName, color } = toogler;
-
-  const onHandleChange = (event) => {
-    handleChange(event);
-  };
+  const { title, checked, boxName, color, handleChange } = toogler;
 
   return (
     <FormControlLabel
@@ -14,7 +10,7 @@ export function CustomSwitch({ toogler }) {
       control={
         <Switch
           checked={checked}
-          onChange={onHandleChange}
+          onChange={(event) => handleChange(event)}
           name={boxName}
           inputProps={{ "aria-label": "primary checkbox" }}
           color={color}

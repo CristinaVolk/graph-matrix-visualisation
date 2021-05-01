@@ -1,18 +1,14 @@
 import { FormControlLabel, Checkbox } from "@material-ui/core";
 
 export function CustomCheckbox({ checkbox }) {
-  const { title, checked, handleChange, boxName, disabled } = checkbox;
-
-  const onHandleChange = (event) => {
-    handleChange(event);
-  };
+  const { title, checked, boxName, disabled, handleChange } = checkbox;
 
   return (
     <FormControlLabel
       disabled={disabled}
       control={
         <Checkbox
-          onChange={onHandleChange}
+          onChange={(event) => handleChange(event)}
           id={title}
           checked={checked}
           name={boxName}

@@ -4,24 +4,13 @@ import { Button, ButtonGroup, Typography } from "@material-ui/core";
 
 import { layouts } from "../utils/appData";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: "60%",
-    margin: theme.spacing(2),
-    display: "flex",
-    flexDirection: "column",
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-  },
-}));
-
 export function ChangeLayout({ changeLayout }) {
   const classes = useStyles();
 
   const runLayout = useCallback(
     (event) => {
       console.log(
+        // clear comment
         event.target.innerHTML.replace(/(<([^>]+)>)/gi, "").toLowerCase(),
       );
       changeLayout(
@@ -32,7 +21,7 @@ export function ChangeLayout({ changeLayout }) {
   );
 
   return (
-    <div className={classes.root}>
+    <div className={classes.layoutsBoxContainer}>
       <Typography gutterBottom color='secondary' variant='h6' align='center'>
         Choose one of the layouts below to arrange nodes in various ways
       </Typography>
@@ -53,3 +42,15 @@ export function ChangeLayout({ changeLayout }) {
     </div>
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  layoutsBoxContainer: {
+    width: "60%",
+    margin: theme.spacing(2),
+    display: "flex",
+    flexDirection: "column",
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+  },
+}));
