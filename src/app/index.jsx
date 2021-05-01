@@ -10,14 +10,17 @@ import { ChangeLayout } from "../components/ChangeLayout";
 import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
-import { debounce } from "../utils/tools";
-import { layouts } from "../utils/appData";
+import { debounce, validateLayoutName } from "../utils/tools";
 
 const App = () => {
-  const { chart, loadedChart } = useComponent();
-  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
-  const classes = useStyles();
-  const [animated, setAnimated] = useState(false);
+  const {
+    chart,
+    open,
+    selectedItem,
+    loadedChart,
+    clickNodeHandler,
+    handleClose,
+  } = useComponent();
 
   const {
     loading,
@@ -29,12 +32,11 @@ const App = () => {
     onChangeMinFrequency,
   } = useFilterLinks();
 
-  const validateLayoutName = (layoutName) =>
-    layouts.find((item) => item === layoutName);
+  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
+  const classes = useStyles();
 
   const doLayout = useCallback(
     (layoutName) => {
-      setAnimated(true);
       return chart
         .layout(validateLayoutName(layoutName) ? layoutName : "organic", {
           consistent: true,
@@ -45,10 +47,7 @@ const App = () => {
           spacing: "stretched",
           tightness: 1,
         })
-        .then(() => {
-          debounce(setAnimated, 1);
-          setAnimated(false);
-        });
+        .then(() => {});
     },
     [chart],
   );
@@ -96,12 +95,36 @@ const App = () => {
   useEffect(() => {
     if (chart !== null) {
       chart.filter((item) => item.d.checked === true, { type: "link" });
+
       doLayout("organic");
+
+      // chart.on("progress", ({ task, progress }) => {
+      //     console.log(progress);
+      //     if (task === "layout") {
+      //       if (progress < 1) {
+      //         setDisabledCheckbox(true);
+      //       } else {
+      //         setDisabledCheckbox(false);
+      //       }
+      //     }
+      //   });
     }
 
     if (maxFrequentSwitch.checked || minFrequentSwitch.checked) {
       setDisabledCheckbox(true);
     }
+
+    // chart &&
+    //   chart.on("progress", ({ task, progress }) => {
+    //     console.log(progress);
+    //     if (task === "layout") {
+    //       if (progress < 1) {
+    //         setDisabledCheckbox(true);
+    //       } else {
+    //         setDisabledCheckbox(false);
+    //       }
+    //     }
+    //   });
 
     return () => {
       debounce(setDisabledCheckbox(false));
@@ -114,44 +137,13 @@ const App = () => {
     doLayout,
   ]);
 
-  // Extract to a custom hook
-
-  const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const clickNodeHandler = useCallback(
-    ({ id }) => {
-      if (chart.getItem(id)) {
-        setSelectedItem(chart.getItem(id));
-        handleClickOpen();
-      }
-    },
-    [chart],
-  );
-
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedItem(value);
-  };
-
   return (
     !loading && (
-      <Grid
-        container
-        direction='row'
-        justify='center'
-        alignItems='center'
-        wrap='wrap'
-        className={classes.mainGrid}
-      >
+      <Grid container className={classes.mainGrid}>
         <Chart
           data={!loading && chartContent}
           ready={loadedChart}
-          containerClassName={classes.root}
+          containerClassName={classes.chartRoot}
           click={clickNodeHandler}
         />
 
@@ -166,15 +158,15 @@ const App = () => {
         <div className={classes.checkboxContainer}>
           <ChangeLayout changeLayout={doLayout} />
 
-          <FormGroup component='fieldset' className={classes.formGroup}>
+          <FormGroup
+            component='fieldset'
+            className={classes.formGroupFrequrncy}
+          >
             <CustomCheckbox checkbox={lowFrequentCheckBox} />
-
             <CustomCheckbox checkbox={middleFrequentCheckBox} />
-
             <CustomCheckbox checkbox={highFrequentCheckBox} />
 
             <CustomSwitch toogler={maxFrequentSwitch} />
-
             <CustomSwitch toogler={minFrequentSwitch} />
           </FormGroup>
         </div>
@@ -186,8 +178,11 @@ const App = () => {
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     background: "#000000e3",
+    flexFlow: "row wrap",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  root: {
+  chartRoot: {
     height: "100vh",
     width: "65vw",
     margin: `${theme.spacing(4)}px 0`,
@@ -203,7 +198,7 @@ const useStyles = makeStyles((theme) => ({
     width: "30vw",
     background: "rgb(0 0 0 / 40%)",
   },
-  formGroup: {
+  formGroupFrequrncy: {
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "column",
