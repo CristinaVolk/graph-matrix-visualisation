@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core/";
 
 export function InformationBox(props) {
+  //extract to the custom hook
   const { onClose, selectedItem, open } = props;
 
   const handleClose = () => {

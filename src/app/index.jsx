@@ -15,6 +15,9 @@ import { layouts } from "../utils/appData";
 
 const App = () => {
   const { chart, loadedChart } = useComponent();
+  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
+  const classes = useStyles();
+  const [animated, setAnimated] = useState(false);
 
   const {
     loading,
@@ -42,7 +45,10 @@ const App = () => {
           spacing: "stretched",
           tightness: 1,
         })
-        .then(() => {});
+        .then(() => {
+          debounce(setAnimated, 1);
+          setAnimated(false);
+        });
     },
     [chart],
   );
@@ -108,6 +114,8 @@ const App = () => {
     doLayout,
   ]);
 
+  // Extract to a custom hook
+
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -138,6 +146,7 @@ const App = () => {
         justify='center'
         alignItems='center'
         wrap='wrap'
+        className={classes.mainGrid}
       >
         <Chart
           data={!loading && chartContent}
@@ -175,21 +184,31 @@ const App = () => {
 };
 
 const useStyles = makeStyles((theme) => ({
+  mainGrid: {
+    background: "#000000e3",
+  },
   root: {
     height: "100vh",
-    width: "60vw",
+    width: "65vw",
+    margin: `${theme.spacing(4)}px 0`,
+    "& > canvas": {
+      background: "black",
+    },
   },
   checkboxContainer: {
     display: "flex",
     flexFlow: "column wrap",
     alignItems: "center",
-    marginBottom: theme.spacing(6),
+    paddingBottom: theme.spacing(9),
+    width: "30vw",
+    background: "rgb(0 0 0 / 40%)",
   },
   formGroup: {
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "column",
     marginLeft: theme.spacing(10),
+    color: "rosybrown",
   },
 }));
 
