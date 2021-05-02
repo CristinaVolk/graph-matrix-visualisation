@@ -137,10 +137,28 @@ const App = () => {
     doLayout,
   ]);
 
+  const chartOptions = {
+    drag: {
+      links: true,
+    },
+    handMode: true,
+    minZoom: 0.01,
+    selectionColour: "orange",
+    linkEnds: { avoidLabels: false },
+    backColour: "#2d383f",
+    watermark: {
+      a: "top",
+      fb: false,
+      fs: 48,
+      fc: "white",
+    },
+  };
+
   return (
     !loading && (
       <Grid container className={classes.mainGrid}>
         <Chart
+          options={chartOptions}
           data={!loading && chartContent}
           ready={loadedChart}
           containerClassName={classes.chartRoot}

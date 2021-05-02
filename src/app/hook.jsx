@@ -1,3 +1,4 @@
+import "keylines";
 import { useState, useEffect, useCallback } from "react";
 
 import { useGetCharMatrixData } from "./useGetCharMatrixData";
