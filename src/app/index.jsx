@@ -1,7 +1,7 @@
 import "keylines";
 import React, { useState, useEffect, useCallback } from "react";
 import { Chart } from "./react-keylines";
-import { Grid, FormGroup } from "@material-ui/core/";
+import { Grid, FormGroup, Typography } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
@@ -114,18 +114,6 @@ const App = () => {
       setDisabledCheckbox(true);
     }
 
-    // chart &&
-    //   chart.on("progress", ({ task, progress }) => {
-    //     console.log(progress);
-    //     if (task === "layout") {
-    //       if (progress < 1) {
-    //         setDisabledCheckbox(true);
-    //       } else {
-    //         setDisabledCheckbox(false);
-    //       }
-    //     }
-    //   });
-
     return () => {
       debounce(setDisabledCheckbox(false));
     };
@@ -173,9 +161,18 @@ const App = () => {
           />
         </div>
 
-        <div className={classes.checkboxContainer}>
+        <Grid container className={classes.checkboxContainer}>
           <ChangeLayout changeLayout={doLayout} />
 
+          <Typography
+            className={classes.checkboxLabel}
+            gutterBottom
+            color='secondary'
+            variant='subtitle1'
+            align='center'
+          >
+            Filter chapter characters data by frequency
+          </Typography>
           <FormGroup
             component='fieldset'
             className={classes.formGroupFrequrncy}
@@ -183,11 +180,12 @@ const App = () => {
             <CustomCheckbox checkbox={lowFrequentCheckBox} />
             <CustomCheckbox checkbox={middleFrequentCheckBox} />
             <CustomCheckbox checkbox={highFrequentCheckBox} />
-
-            <CustomSwitch toogler={maxFrequentSwitch} />
-            <CustomSwitch toogler={minFrequentSwitch} />
+            <Grid container className={classes.switchGrid}>
+              <CustomSwitch toogler={maxFrequentSwitch} />
+              <CustomSwitch toogler={minFrequentSwitch} />
+            </Grid>
           </FormGroup>
-        </div>
+        </Grid>
       </Grid>
     )
   );
@@ -199,29 +197,44 @@ const useStyles = makeStyles((theme) => ({
     flexFlow: "row wrap",
     justifyContent: "center",
     alignItems: "center",
+
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+    },
   },
   chartRoot: {
-    height: "100vh",
+    height: "92vh",
     width: "65vw",
     margin: `${theme.spacing(4)}px 0`,
-    "& > canvas": {
-      background: "black",
-    },
   },
   checkboxContainer: {
     display: "flex",
     flexFlow: "column wrap",
     alignItems: "center",
-    paddingBottom: theme.spacing(9),
     width: "30vw",
+    height: "92vh",
     background: "rgb(0 0 0 / 40%)",
+    "& > h6": {
+      width: "90%",
+    },
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "row",
+      width: "85vw",
+      marginBottom: theme.spacing(4),
+    },
   },
   formGroupFrequrncy: {
     display: "flex",
     flexWrap: "wrap",
     flexDirection: "column",
-    marginLeft: theme.spacing(10),
+    marginLeft: theme.spacing(8),
     color: "rosybrown",
+  },
+  checkboxLabel: {
+    fontSize: "1.1rem",
+  },
+  switchGrid: {
+    marginTop: theme.spacing(3),
   },
 }));
 

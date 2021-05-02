@@ -1,4 +1,5 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, ButtonGroup, Typography } from "@material-ui/core";
 
@@ -22,7 +23,12 @@ export function ChangeLayout({ changeLayout }) {
 
   return (
     <div className={classes.layoutsBoxContainer}>
-      <Typography gutterBottom color='secondary' variant='h6' align='center'>
+      <Typography
+        className={classes.root}
+        color='secondary'
+        variant='subtitle1'
+        align='center'
+      >
         Choose one of the layouts below to arrange nodes in various ways
       </Typography>
       <ButtonGroup
@@ -33,7 +39,12 @@ export function ChangeLayout({ changeLayout }) {
       >
         {layouts.map((singleLayout) => {
           return (
-            <Button key={singleLayout} component='button' onClick={runLayout}>
+            <Button
+              className={classes.layoutButton}
+              key={singleLayout}
+              component='button'
+              onClick={runLayout}
+            >
               {singleLayout}
             </Button>
           );
@@ -45,12 +56,20 @@ export function ChangeLayout({ changeLayout }) {
 
 const useStyles = makeStyles((theme) => ({
   layoutsBoxContainer: {
-    width: "60%",
+    width: "90%",
     margin: theme.spacing(2),
     display: "flex",
     flexDirection: "column",
-    "& > *": {
-      margin: theme.spacing(1),
-    },
+    alignItems: "center",
+  },
+  root: {
+    fontSize: "1.1rem",
+  },
+  layoutButton: {
+    width: "120px",
   },
 }));
+
+ChangeLayout.propTypes = {
+  changeLayout: PropTypes.func.isRequired,
+};
