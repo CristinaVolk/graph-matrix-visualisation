@@ -10,16 +10,16 @@ export function useGetCharMatrixData() {
 
   const chooseColor = (group) => {
     const colors = [
-      "rgb(26, 26, 255)", // blue
-      "rgb(255, 102, 0)", // orange
-      "rgb(0, 102, 0)", // green
-      "rgb(204, 0, 0)", // red
-      "rgb(204, 0, 204)", // purple
-      "rgb(153, 51, 0)", //brown
-      "rgb(255, 102, 153)", // light pink
+      "rgb(33, 60, 110)", // blue
+      "rgb(243, 114, 44)", // orange
+      "rgb(82, 183, 136)", // green
+      "rgb(128, 15, 19)", // red
+      "rgb(188, 138, 178)", // purple
+      "rgb(119, 68, 24)", //brown
+      "rgb(253, 155, 173)", // light pink
       "rgb(138, 138, 92)", //grey
-      "rgb(255, 255, 26)", //yellow
-      "rgb(0, 204, 255)", //light blue
+      "rgb(251, 182, 55)", //yellow
+      "rgb(62, 148, 224)", //light blue
       "rgb(38, 38, 115)", //darkblue
     ];
     return colors.find((_color, index) => index === group);
