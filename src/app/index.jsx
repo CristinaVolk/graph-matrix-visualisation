@@ -1,5 +1,5 @@
 import "keylines";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Chart } from "./react-keylines";
 import { Grid, FormGroup, Typography } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,8 +10,9 @@ import { ChangeLayout } from "../components/ChangeLayout";
 import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
-import { debounce, validateLayoutName } from "../utils/tools";
-import { chartOptions } from "../utils/appData";
+import { /*debounce,*/ validateLayoutName } from "../utils/tools";
+import { chartOptions, zoomOptions } from "../utils/appData";
+import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
 
 const App = () => {
   const {
@@ -26,63 +27,18 @@ const App = () => {
   const {
     loading,
     chartContent,
-    checkboxState,
-    checkMaxMinFrequency,
-    checkFrequency,
-    onChangeMaxFrequency,
-    onChangeMinFrequency,
+    lowFrequentCheckBox,
+    middleFrequentCheckBox,
+    highFrequentCheckBox,
+    maxFrequentSwitch,
+    minFrequentSwitch,
+    setDisabledCheckbox,
   } = useFilterLinks();
-
-  const [disabledCheckbox, setDisabledCheckbox] = useState(false);
 
   const classes = useStyles();
 
-  const lowFrequentCheckBox = {
-    title: "Low: less than 5",
-    boxName: "low",
-    checked: checkboxState.low,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
-  };
-
-  const middleFrequentCheckBox = {
-    title: "Middle: between 5 & 9",
-    boxName: "middle",
-    checked: checkboxState.middle,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
-  };
-
-  const highFrequentCheckBox = {
-    title: "High: more than 9",
-    boxName: "high",
-    checked: checkboxState.high,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
-  };
-
-  const maxFrequentSwitch = {
-    title: "Show characters with MAX Frequency",
-    boxName: "max",
-    checked: checkMaxMinFrequency.max,
-    handleChange: onChangeMaxFrequency,
-    color: "primary",
-  };
-
-  const minFrequentSwitch = {
-    title: "Show characters with MIN Frequency",
-    boxName: "min",
-    checked: checkMaxMinFrequency.min,
-    handleChange: onChangeMinFrequency,
-    color: "secondary",
-  };
-
   const doLayout = useCallback(
     async (layoutName) => {
-      const zoomOptions = {
-        animate: true,
-        time: 300,
-      };
       await chart.layout(
         validateLayoutName(layoutName) ? layoutName : "organic",
         {
@@ -97,24 +53,40 @@ const App = () => {
       );
       await chart.zoom("fit", zoomOptions);
     },
-
     [chart],
   );
 
   useEffect(() => {
     if (chart !== null) {
       chart.filter((item) => item.d.checked === true, { type: "link" });
-
       doLayout("organic");
     }
   }, [chart, chartContent, doLayout]);
 
   chart &&
-    chart.on("progress", ({ task, progress }) => {
+    chart.on("progress", ({ progress }) => {
       progress < 1 || maxFrequentSwitch.checked || minFrequentSwitch.checked
         ? setDisabledCheckbox(true)
         : setDisabledCheckbox(false);
     });
+
+  const nodeIdsToGroup = (groupNo) => {
+    return chartContent.items
+      .filter(
+        (item) => item.type === "node" && item.d.group === Number(groupNo),
+      )
+      .map((node) => node.id);
+  };
+
+  const arrangeNodesFromGroup = (groupNumber) => {
+    chart &&
+      chart.arrange(
+        "circle",
+        nodeIdsToGroup(groupNumber),
+        { fit: true, animate: true, time: 1000 },
+        chart.zoom("fit", zoomOptions),
+      );
+  };
 
   return (
     !loading && (
@@ -138,7 +110,7 @@ const App = () => {
           />
         </Grid>
 
-        <Grid container className={classes.checkboxContainer}>
+        <Grid container className={classes.toolBarContainer}>
           <ChangeLayout changeLayout={doLayout} />
 
           <Typography
@@ -158,10 +130,12 @@ const App = () => {
             <CustomCheckbox checkbox={middleFrequentCheckBox} />
             <CustomCheckbox checkbox={highFrequentCheckBox} />
             <Grid container className={classes.switchGrid}>
-              <CustomSwitch toogler={maxFrequentSwitch} />
-              <CustomSwitch toogler={minFrequentSwitch} />
+              <CustomSwitch toogler={maxFrequentSwitch && maxFrequentSwitch} />
+              <CustomSwitch toogler={minFrequentSwitch && minFrequentSwitch} />
             </Grid>
           </FormGroup>
+
+          <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
         </Grid>
       </Grid>
     )
@@ -186,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
     width: "65vw",
     margin: `${theme.spacing(4)}px 0`,
   },
-  checkboxContainer: {
+  toolBarContainer: {
     display: "flex",
     flexFlow: "column wrap",
     alignItems: "center",
