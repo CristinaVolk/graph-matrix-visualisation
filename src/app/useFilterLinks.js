@@ -3,7 +3,7 @@ import { useComponent } from "./hook";
 import { assending, descending } from "../utils/tools";
 
 export function useFilterLinks() {
-  const { chart, chartContent, loading, setChartContent } = useComponent();
+  const { chartContent, loading, setChartContent } = useComponent();
 
   const [checkboxState, setCheckboxState] = useState({
     low: true,
@@ -17,19 +17,16 @@ export function useFilterLinks() {
   });
 
   const filterFreqLinks = (options) => {
-    return chartContent.items.map((item) => {
-      if (
-        item.type === "link" &&
-        item.d.frequency >= options.from &&
-        item.d.frequency < options.to
-      ) {
-        return {
-          ...item,
-          d: { ...item.d, checked: true },
-        };
-      }
-      return { ...item };
-    });
+    return chartContent.items.map((item) =>
+      item.type === "link" &&
+      item.d.frequency >= options.from &&
+      item.d.frequency < options.to
+        ? {
+            ...item,
+            d: { ...item.d, checked: true },
+          }
+        : { ...item },
+    );
   };
 
   const unfilterFreqLinks = (options) => {
@@ -93,8 +90,6 @@ export function useFilterLinks() {
       .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
       .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
       .flat();
-
-    chart && chart.foreground(nodeIds.map((nodeId) => nodeId));
 
     return nodeIds;
   };

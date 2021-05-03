@@ -8,8 +8,8 @@ export function useComponent() {
       ID: link.id,
       Node_Source_Id: link.id1,
       Node_Target_Id: link.id2,
-      Node_Source_Name: link.t1,
-      Node_Target_Name: link.t2,
+      Node_Source_Name: link.d.sourceNode,
+      Node_Target_Name: link.d.targetNode,
       Frequency: link.d.frequency,
       Width: link.w,
     };

@@ -31,13 +31,16 @@ export function useGetCharMatrixData() {
       return {
         type: "node",
         id: index,
-        t: `${singleNode.name}`,
         c: chooseColor(singleNode.group),
-        d: singleNode.group,
+        t: `${singleNode.name}`,
+        d: {
+          group: singleNode.group,
+          title: `${singleNode.name}`,
+        },
       };
     });
 
-    const chartLinks = links.map((singleLink, index) => {
+    const chartLinks = links.map((singleLink) => {
       return {
         type: "link",
         id: `link-${uuidv4()}`,
@@ -45,9 +48,14 @@ export function useGetCharMatrixData() {
         id2: singleLink.target,
         c: "rgb(0, 0, 26, 0.5)",
         t: singleLink.value,
-        t1: chartNodes.find((node) => node.id === singleLink.source).t,
-        t2: chartNodes.find((node) => node.id === singleLink.target).t,
-        d: { frequency: singleLink.value, checked: true },
+        d: {
+          frequency: singleLink.value,
+          checked: true,
+          sourceNode: chartNodes.find((node) => node.id === singleLink.source).d
+            .title,
+          targetNode: chartNodes.find((node) => node.id === singleLink.target).d
+            .title,
+        },
         w: singleLink.value,
       };
     });
