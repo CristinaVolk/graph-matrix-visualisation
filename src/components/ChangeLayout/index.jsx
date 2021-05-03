@@ -1,25 +1,14 @@
-import React, { useCallback } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, ButtonGroup, Typography } from "@material-ui/core";
 
-import { layouts } from "../utils/appData";
+import { useComponent } from "./hook";
+import { layouts } from "../../utils/appData";
 
 export function ChangeLayout({ changeLayout }) {
+  const { runLayout } = useComponent(changeLayout);
   const classes = useStyles();
-
-  const runLayout = useCallback(
-    (event) => {
-      console.log(
-        // clear comment
-        event.target.innerHTML.replace(/(<([^>]+)>)/gi, "").toLowerCase(),
-      );
-      changeLayout(
-        event.target.innerHTML.replace(/(<([^>]+)>)/gi, "").toLowerCase(),
-      );
-    },
-    [changeLayout],
-  );
 
   return (
     <div className={classes.layoutsBoxContainer}>

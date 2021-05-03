@@ -10,9 +10,9 @@ import { ChangeLayout } from "../components/ChangeLayout";
 import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
+import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
 import { /*debounce,*/ validateLayoutName } from "../utils/tools";
 import { chartOptions, zoomOptions } from "../utils/appData";
-import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
 
 const App = () => {
   const {
@@ -70,6 +70,7 @@ const App = () => {
         : setDisabledCheckbox(false);
     });
 
+  // exctract to the hook
   const nodeIdsToGroup = (groupNo) => {
     return chartContent.items
       .filter(

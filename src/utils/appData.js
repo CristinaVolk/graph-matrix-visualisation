@@ -15,3 +15,8 @@ export const chartOptions = {
   backColour: "#2d383f",
   selectionColour: "#010e16",
 };
+
+export const zoomOptions = {
+  animate: true,
+  time: 300,
+};
