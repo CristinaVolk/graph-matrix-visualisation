@@ -11,6 +11,7 @@ import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
 import { debounce, validateLayoutName } from "../utils/tools";
+import { chartOptions } from "../utils/appData";
 
 const App = () => {
   const {
@@ -33,24 +34,8 @@ const App = () => {
   } = useFilterLinks();
 
   const [disabledCheckbox, setDisabledCheckbox] = useState(false);
-  const classes = useStyles();
 
-  const doLayout = useCallback(
-    (layoutName) => {
-      return chart
-        .layout(validateLayoutName(layoutName) ? layoutName : "organic", {
-          consistent: true,
-          packing: "adaptive",
-          animate: true,
-          time: 1000,
-          tidy: true,
-          spacing: "stretched",
-          tightness: 1,
-        })
-        .then(() => {});
-    },
-    [chart],
-  );
+  const classes = useStyles();
 
   const lowFrequentCheckBox = {
     title: "Low: less than 5",
@@ -92,55 +77,44 @@ const App = () => {
     color: "secondary",
   };
 
+  const doLayout = useCallback(
+    async (layoutName) => {
+      const zoomOptions = {
+        animate: true,
+        time: 300,
+      };
+      await chart.layout(
+        validateLayoutName(layoutName) ? layoutName : "organic",
+        {
+          consistent: true,
+          packing: "adaptive",
+          animate: true,
+          time: 1000,
+          tidy: true,
+          spacing: "stretched",
+          tightness: 1,
+        },
+      );
+      await chart.zoom("fit", zoomOptions);
+    },
+
+    [chart],
+  );
+
   useEffect(() => {
     if (chart !== null) {
       chart.filter((item) => item.d.checked === true, { type: "link" });
 
       doLayout("organic");
-
-      // chart.on("progress", ({ task, progress }) => {
-      //     console.log(progress);
-      //     if (task === "layout") {
-      //       if (progress < 1) {
-      //         setDisabledCheckbox(true);
-      //       } else {
-      //         setDisabledCheckbox(false);
-      //       }
-      //     }
-      //   });
     }
+  }, [chart, chartContent, doLayout]);
 
-    if (maxFrequentSwitch.checked || minFrequentSwitch.checked) {
-      setDisabledCheckbox(true);
-    }
-
-    return () => {
-      debounce(setDisabledCheckbox(false));
-    };
-  }, [
-    chart,
-    chartContent,
-    maxFrequentSwitch.checked,
-    minFrequentSwitch.checked,
-    doLayout,
-  ]);
-
-  const chartOptions = {
-    drag: {
-      links: true,
-    },
-    handMode: true,
-    minZoom: 0.01,
-    selectionColour: "orange",
-    linkEnds: { avoidLabels: false },
-    backColour: "#2d383f",
-    watermark: {
-      a: "top",
-      fb: false,
-      fs: 48,
-      fc: "white",
-    },
-  };
+  chart &&
+    chart.on("progress", ({ task, progress }) => {
+      progress < 1 || maxFrequentSwitch.checked || minFrequentSwitch.checked
+        ? setDisabledCheckbox(true)
+        : setDisabledCheckbox(false);
+    });
 
   return (
     !loading && (
@@ -151,15 +125,18 @@ const App = () => {
           ready={loadedChart}
           containerClassName={classes.chartRoot}
           click={clickNodeHandler}
+          selection={chartContent.items.map((item) =>
+            item.type === "node" ? item.id : null,
+          )}
         />
 
-        <div>
+        <Grid item>
           <InformationBox
             selectedItem={selectedItem}
             open={open}
             onClose={handleClose}
           />
-        </div>
+        </Grid>
 
         <Grid container className={classes.checkboxContainer}>
           <ChangeLayout changeLayout={doLayout} />
@@ -190,6 +167,8 @@ const App = () => {
     )
   );
 };
+
+//update all the colours in the palette
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
