@@ -11,8 +11,9 @@ import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
 import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
+import { InformationSnack } from "../components/InfoSnack/InforSnack";
 import { /*debounce,*/ validateLayoutName } from "../utils/tools";
-import { chartOptions, zoomOptions } from "../utils/appData";
+import { chartOptions, zoomOptions, arrangeOptions } from "../utils/appData";
 
 const App = () => {
   const {
@@ -84,7 +85,7 @@ const App = () => {
       chart.arrange(
         "circle",
         nodeIdsToGroup(groupNumber),
-        { fit: true, animate: true, time: 1000 },
+        arrangeOptions,
         chart.zoom("fit", zoomOptions),
       );
   };
@@ -98,11 +99,10 @@ const App = () => {
           ready={loadedChart}
           containerClassName={classes.chartRoot}
           click={clickNodeHandler}
-          selection={chartContent.items.map((item) =>
-            item.type === "node" ? item.id : null,
-          )}
+          // selection={chartContent.items.map((item) =>
+          //   item.type === "node" ? item.id : null,
+          // )}
         />
-
         <Grid item>
           <InformationBox
             selectedItem={selectedItem}
@@ -110,7 +110,6 @@ const App = () => {
             onClose={handleClose}
           />
         </Grid>
-
         <Grid container className={classes.toolBarContainer}>
           <ChangeLayout changeLayout={doLayout} />
 
@@ -137,6 +136,7 @@ const App = () => {
           </FormGroup>
 
           <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
+          <InformationSnack />
         </Grid>
       </Grid>
     )
@@ -152,7 +152,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
 
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       flexDirection: "column",
     },
   },
@@ -171,9 +171,9 @@ const useStyles = makeStyles((theme) => ({
     "& > h6": {
       width: "90%",
     },
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       flexDirection: "row",
-      width: "85vw",
+      width: "65vw",
       marginBottom: theme.spacing(4),
     },
   },
@@ -183,6 +183,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     marginLeft: theme.spacing(8),
     color: "rosybrown",
+    marginBottom: "2vw",
   },
   checkboxLabel: {
     fontSize: "1.1rem",
