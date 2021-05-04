@@ -13,7 +13,7 @@ export function ChangeLayout({ changeLayout }) {
   return (
     <div className={classes.layoutsBoxContainer}>
       <Typography
-        className={classes.root}
+        className={classes.boxTitle}
         color='secondary'
         variant='subtitle1'
         align='center'
@@ -46,16 +46,17 @@ export function ChangeLayout({ changeLayout }) {
 const useStyles = makeStyles((theme) => ({
   layoutsBoxContainer: {
     width: "90%",
-    margin: theme.spacing(2),
+    margin: theme.spacing(1),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
-  root: {
+  boxTitle: {
     fontSize: "1.1rem",
   },
   layoutButton: {
     width: "120px",
+    fontSize: "0.7em",
   },
 }));
 

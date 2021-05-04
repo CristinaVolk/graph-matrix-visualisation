@@ -20,8 +20,8 @@ export function useComponent() {
       Type: node.type,
       ID: node.id,
       Name: node.t,
-      colour: node.c,
-      GroupNo: node.d,
+      Colour: node.c,
+      Chapter_No: node.d.group,
       X_Coord: Math.floor(node.x),
       Y_Coord: Math.floor(node.y),
     };
