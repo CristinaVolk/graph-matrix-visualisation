@@ -20,3 +20,11 @@ export const zoomOptions = {
   animate: true,
   time: 300,
 };
+
+export const arrangeOptions = {
+  fit: true,
+  animate: true,
+  time: 1000,
+  tightness: 4,
+  position: "average",
+};

@@ -5,7 +5,7 @@ import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
 
 import { useComponent } from "./hook";
 
-const chapters = [1, 2, 3, 4, 5, 6, 7, 8];
+const chapters = [0, 1, 2, 3, 4, 5, 7, 8, 10];
 
 export function ArrangeNodesLayout({ arrangeNodesFromGroup }) {
   const { arrangeNodes } = useComponent(arrangeNodesFromGroup);
@@ -32,6 +32,7 @@ export function ArrangeNodesLayout({ arrangeNodesFromGroup }) {
         color='primary'
         aria-label='vertical contained primary button group'
         variant='text'
+        className={classes.arrangeButtonGroup}
       >
         {chapters.map((chapter) => {
           return (
@@ -56,7 +57,11 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   root: {
-    fontSize: "1.2em",
+    fontSize: "1.1rem",
+    marginBottom: "1vw",
+  },
+  arrangeButtonGroup: {
+    flexWrap: "wrap",
   },
   chapterButton: {
     width: theme.spacing(3),
