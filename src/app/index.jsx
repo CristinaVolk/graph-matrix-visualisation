@@ -11,7 +11,7 @@ import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
 import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
-import { InformationSnack } from "../components/InfoSnack/InforSnack";
+import { InformationSnack } from "../components/InfoSnack";
 import { /*debounce,*/ validateLayoutName } from "../utils/tools";
 import { chartOptions, zoomOptions, arrangeOptions } from "../utils/appData";
 
