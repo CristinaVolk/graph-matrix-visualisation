@@ -26,7 +26,7 @@ export function InformationSnack() {
   return (
     <div>
       <Button color='secondary' onClick={handleClick(SlideTransition)}>
-        For your Information
+        For your Information :)
       </Button>
       <Snackbar
         open={state.open}
@@ -54,12 +54,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   snackContentRoot: {
-    background: "#0a0a0a",
+    background: theme.palette.secondary.dark,
   },
   snackContentMessage: {
     wordBreak: "break-word",
     fontWeight: 300,
     lineHeight: `${theme.spacing(3)}px`,
-    color: "rosybrown",
+    color: theme.palette.primary.contrastText,
   },
 }));

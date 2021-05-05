@@ -8,8 +8,8 @@ export function useComponent() {
       ID: link.id,
       Node_Source_Id: link.id1,
       Node_Target_Id: link.id2,
-      First_Character_Name: link.d.sourceNode,
-      Character: link.d.targetNode,
+      First_Character: link.d.sourceNode,
+      Second_Character: link.d.targetNode,
       Occurrence_in_the_chapter: link.d.frequency,
       Width_of_the_link: link.w,
     };
@@ -19,7 +19,7 @@ export function useComponent() {
     return {
       Type: node.type,
       ID: node.id,
-      Name: node.t,
+      Character: node.t,
       Colour: node.c,
       Chapter_No: node.d.group,
       X_Coord: Math.floor(node.x),
