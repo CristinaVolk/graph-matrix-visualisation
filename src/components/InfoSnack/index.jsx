@@ -15,7 +15,10 @@ export function InformationSnack() {
 
   const SnackContent = (
     <SnackbarContent
-      classes={{ message: classes.snackContent }}
+      classes={{
+        root: classes.snackContentRoot,
+        message: classes.snackContentMessage,
+      }}
       message={snackContent.message}
     />
   );
@@ -46,7 +49,13 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     padding: theme.spacing(1),
   },
-  snackContent: {
+  snackContentRoot: {
+    background: "#0a0a0a",
+  },
+  snackContentMessage: {
     wordBreak: "break-word",
+    fontWeight: "300",
+    lineHeight: `${theme.spacing(3)}px`,
+    color: "rosybrown",
   },
 }));
