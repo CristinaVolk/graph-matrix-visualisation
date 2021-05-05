@@ -38,6 +38,17 @@ export function useComponent() {
     setSelectedItem(value);
   };
 
+  const nodeIdsToArrange = useCallback(
+    (groupNo) => {
+      return chartContent.items
+        .filter(
+          (item) => item.type === "node" && item.d.group === Number(groupNo),
+        )
+        .map((node) => node.id);
+    },
+    [chartContent.items],
+  );
+
   useEffect(() => {
     fetchCharMatrixData();
 
@@ -54,5 +65,6 @@ export function useComponent() {
     setChartContent,
     clickNodeHandler,
     handleClose,
+    nodeIdsToArrange,
   };
 }
