@@ -12,7 +12,7 @@ export const chartOptions = {
   handMode: true,
   minZoom: 0.01,
   linkEnds: { avoidLabels: false },
-  backColour: "#2d383f",
+  backColour: "#0c2531",
   selectionColour: "#010e16",
 };
 

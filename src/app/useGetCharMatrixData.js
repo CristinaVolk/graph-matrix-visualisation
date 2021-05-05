@@ -47,7 +47,7 @@ export function useGetCharMatrixData() {
         id1: singleLink.source,
         id2: singleLink.target,
         c: "rgb(0, 0, 26, 0.5)",
-        t: singleLink.value,
+        //t: singleLink.value,
         d: {
           frequency: singleLink.value,
           checked: true,

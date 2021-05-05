@@ -26,7 +26,7 @@ export function InformationSnack() {
   return (
     <div>
       <Button color='secondary' onClick={handleClick(SlideTransition)}>
-        Slide Information
+        For your Information
       </Button>
       <Snackbar
         open={state.open}
@@ -48,13 +48,17 @@ const useStyles = makeStyles((theme) => ({
     width: "30%",
     margin: theme.spacing(1),
     padding: theme.spacing(1),
+
+    [theme.breakpoints.down("md")]: {
+      width: "90%",
+    },
   },
   snackContentRoot: {
     background: "#0a0a0a",
   },
   snackContentMessage: {
     wordBreak: "break-word",
-    fontWeight: "300",
+    fontWeight: 300,
     lineHeight: `${theme.spacing(3)}px`,
     color: "rosybrown",
   },

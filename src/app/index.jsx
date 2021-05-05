@@ -151,7 +151,7 @@ const App = () => {
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
-    background: "#000000e3",
+    background: theme.palette.background.default,
     flexFlow: "row wrap",
     justifyContent: "center",
     alignItems: "center",
