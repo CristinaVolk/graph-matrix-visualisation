@@ -16,10 +16,9 @@ import { FrequencyComponentList } from "../components/FrequencyComponentList";
 
 const App = () => {
   const {
-    chart,
+    chartRef,
     open,
     selectedItem,
-    loadedChart,
     clickNodeHandler,
     handleClose,
     nodeIdsToArrange,
@@ -39,7 +38,7 @@ const App = () => {
 
   const doLayout = useCallback(
     async (layoutName) => {
-      await chart.layout(
+      await chartRef.current.component.layout(
         validateLayoutName(layoutName) ? layoutName : "organic",
         {
           consistent: true,
@@ -51,32 +50,37 @@ const App = () => {
           tightness: 1,
         },
       );
-      await chart.zoom("fit", zoomOptions);
+      await chartRef.current.component.zoom("fit", zoomOptions);
     },
-    [chart],
+    [chartRef],
   );
 
   useEffect(() => {
-    if (chart !== null) {
-      chart.filter((item) => item.d.checked === true, { type: "link" });
+    if (chartRef.current.component) {
+      chartRef.current.component.filter((item) => item.d.checked === true, {
+        type: "link",
+      });
       doLayout("organic");
     }
-  }, [chart, chartContent, doLayout]);
 
-  chart &&
-    chart.on("progress", ({ progress }) => {
+    console.log(chartRef.current);
+  }, [chartRef, doLayout]);
+
+  chartRef.current &&
+    chartRef.current.component &&
+    chartRef.current.component.on("progress", ({ progress }) => {
       progress < 1 || maxFrequentSwitch.checked || minFrequentSwitch.checked
         ? setDisabledCheckbox(true)
         : setDisabledCheckbox(false);
     });
 
   const arrangeNodesFromGroup = (groupNumber) => {
-    chart &&
-      chart.arrange(
+    chartRef.current &&
+      chartRef.current.component.arrange(
         "circle",
         nodeIdsToArrange(groupNumber),
         arrangeOptions,
-        chart.zoom("fit", zoomOptions),
+        chartRef.current.component.zoom("fit", zoomOptions),
       );
   };
 
@@ -84,9 +88,9 @@ const App = () => {
     !loading && (
       <Grid container className={classes.mainGrid}>
         <Chart
+          ref={chartRef}
           options={chartOptions}
           data={!loading && chartContent}
-          ready={loadedChart}
           containerClassName={classes.chartRoot}
           click={clickNodeHandler}
         />

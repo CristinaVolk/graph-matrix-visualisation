@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 import { useGetCharMatrixData } from "./useGetCharMatrixData";
 
 export function useComponent() {
-  const [chart, setChart] = useState(null);
+  const chartRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -15,23 +15,17 @@ export function useComponent() {
     setChartContent,
   } = useGetCharMatrixData();
 
-  const loadedChart = useCallback((chart) => {
-    setChart(chart);
+  const handleClickOpen = () => setOpen(true);
+
+  const clickNodeHandler = useCallback(({ id }) => {
+    if (chartRef.current.component.getItem(id)) {
+      const item = chartRef.current.component.getItem(id);
+      item.x = chartRef.current.component.viewCoordinates(item.x, item.y).x;
+      item.y = chartRef.current.component.viewCoordinates(item.x, item.y).y;
+      setSelectedItem(item);
+      handleClickOpen();
+    }
   }, []);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const clickNodeHandler = useCallback(
-    ({ id }) => {
-      if (chart.getItem(id)) {
-        setSelectedItem(chart.getItem(id));
-        handleClickOpen();
-      }
-    },
-    [chart],
-  );
 
   const handleClose = (value) => {
     setOpen(false);
@@ -56,12 +50,11 @@ export function useComponent() {
   }, [clearError, fetchCharMatrixData]);
 
   return {
+    chartRef,
     chartContent,
     loading,
-    chart,
     open,
     selectedItem,
-    loadedChart,
     setChartContent,
     clickNodeHandler,
     handleClose,
