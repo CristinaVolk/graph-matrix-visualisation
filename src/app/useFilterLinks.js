@@ -173,54 +173,55 @@ export function useFilterLinks() {
     });
   };
 
-  const lowFrequentCheckBox = {
-    title: "Low: less than 5",
-    boxName: "low",
-    checked: checkboxState.low,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
-  };
-  const middleFrequentCheckBox = {
-    title: "Middle: between 5 & 9",
-    boxName: "middle",
-    checked: checkboxState.middle,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
+  const frequencyCheckboxList = {
+    lowFrequentCheckBox: {
+      title: "Low: less than 5",
+      boxName: "low",
+      checked: checkboxState.low,
+      handleChange: checkFrequency,
+      disabled: disabledCheckbox,
+    },
+    middleFrequentCheckBox: {
+      title: "Middle: between 5 & 9",
+      boxName: "middle",
+      checked: checkboxState.middle,
+      handleChange: checkFrequency,
+      disabled: disabledCheckbox,
+    },
+
+    highFrequentCheckBox: {
+      title: "High: more than 9",
+      boxName: "high",
+      checked: checkboxState.high,
+      handleChange: checkFrequency,
+      disabled: disabledCheckbox,
+    },
   };
 
-  const highFrequentCheckBox = {
-    title: "High: more than 9",
-    boxName: "high",
-    checked: checkboxState.high,
-    handleChange: checkFrequency,
-    disabled: disabledCheckbox,
-  };
+  const extremeSwitcherList = {
+    maxFrequentSwitch: {
+      title: "Show characters with MAX Frequency",
+      boxName: "max",
+      checked: checkMaxMinFrequency.max,
+      handleChange: onChangeMaxFrequency,
+      color: "primary",
+    },
 
-  const maxFrequentSwitch = {
-    title: "Show characters with MAX Frequency",
-    boxName: "max",
-    checked: checkMaxMinFrequency.max,
-    handleChange: onChangeMaxFrequency,
-    color: "primary",
-  };
-
-  const minFrequentSwitch = {
-    title: "Show characters with MIN Frequency",
-    boxName: "min",
-    checked: checkMaxMinFrequency.min,
-    handleChange: onChangeMinFrequency,
-    color: "secondary",
+    minFrequentSwitch: {
+      title: "Show characters with MIN Frequency",
+      boxName: "min",
+      checked: checkMaxMinFrequency.min,
+      handleChange: onChangeMinFrequency,
+      color: "secondary",
+    },
   };
 
   return {
     chartContent,
     loading,
     checkboxState,
-    lowFrequentCheckBox,
-    middleFrequentCheckBox,
-    highFrequentCheckBox,
-    maxFrequentSwitch,
-    minFrequentSwitch,
+    frequencyCheckboxList,
+    extremeSwitcherList,
     setChartContent,
     setDisabledCheckbox,
   };

@@ -1,19 +1,18 @@
 import "keylines";
 import React, { useEffect, useCallback } from "react";
 import { Chart } from "./react-keylines";
-import { Grid, FormGroup, Typography } from "@material-ui/core/";
+import { Grid } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
 import { useFilterLinks } from "./useFilterLinks";
 import { ChangeLayout } from "../components/ChangeLayout";
-import { CustomCheckbox } from "../components/CustomCheckbox";
-import { CustomSwitch } from "../components/CustomSwitch";
 import { InformationBox } from "../components/InformationBox";
 import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
 import { InformationSnack } from "../components/InfoSnack";
 import { /*debounce,*/ validateLayoutName } from "../utils/tools";
 import { chartOptions, zoomOptions, arrangeOptions } from "../utils/appData";
+import { FrequencyComponentList } from "../components/FrequencyComponentList";
 
 const App = () => {
   const {
@@ -23,18 +22,18 @@ const App = () => {
     loadedChart,
     clickNodeHandler,
     handleClose,
+    nodeIdsToArrange,
   } = useComponent();
 
   const {
     loading,
     chartContent,
-    lowFrequentCheckBox,
-    middleFrequentCheckBox,
-    highFrequentCheckBox,
-    maxFrequentSwitch,
-    minFrequentSwitch,
+    frequencyCheckboxList,
+    extremeSwitcherList,
     setDisabledCheckbox,
   } = useFilterLinks();
+
+  const { maxFrequentSwitch, minFrequentSwitch } = extremeSwitcherList;
 
   const classes = useStyles();
 
@@ -71,20 +70,11 @@ const App = () => {
         : setDisabledCheckbox(false);
     });
 
-  // exctract to the hook
-  const nodeIdsToGroup = (groupNo) => {
-    return chartContent.items
-      .filter(
-        (item) => item.type === "node" && item.d.group === Number(groupNo),
-      )
-      .map((node) => node.id);
-  };
-
   const arrangeNodesFromGroup = (groupNumber) => {
     chart &&
       chart.arrange(
         "circle",
-        nodeIdsToGroup(groupNumber),
+        nodeIdsToArrange(groupNumber),
         arrangeOptions,
         chart.zoom("fit", zoomOptions),
       );
@@ -99,17 +89,14 @@ const App = () => {
           ready={loadedChart}
           containerClassName={classes.chartRoot}
           click={clickNodeHandler}
-          // selection={chartContent.items.map((item) =>
-          //   item.type === "node" ? item.id : null,
-          // )}
         />
-        <Grid item>
-          <InformationBox
-            selectedItem={selectedItem}
-            open={open}
-            onClose={handleClose}
-          />
-        </Grid>
+
+        <InformationBox
+          selectedItem={selectedItem}
+          open={open}
+          onClose={handleClose}
+        />
+
         <Grid
           container
           alignItems='center'
@@ -117,37 +104,19 @@ const App = () => {
         >
           <ChangeLayout changeLayout={doLayout} />
 
-          <Typography
-            className={classes.checkboxLabel}
-            gutterBottom
-            color='secondary'
-            variant='subtitle1'
-            align='center'
-          >
-            Filter chapter characters data by frequency
-          </Typography>
-          <FormGroup
-            component='fieldset'
-            className={classes.formGroupFrequrncy}
-          >
-            <CustomCheckbox checkbox={lowFrequentCheckBox} />
-            <CustomCheckbox checkbox={middleFrequentCheckBox} />
-            <CustomCheckbox checkbox={highFrequentCheckBox} />
-            <Grid container className={classes.switchGrid}>
-              <CustomSwitch toogler={maxFrequentSwitch && maxFrequentSwitch} />
-              <CustomSwitch toogler={minFrequentSwitch && minFrequentSwitch} />
-            </Grid>
-          </FormGroup>
+          <FrequencyComponentList
+            checkboxList={frequencyCheckboxList}
+            switcherList={extremeSwitcherList}
+          />
 
           <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
+
           <InformationSnack />
         </Grid>
       </Grid>
     )
   );
 };
-
-//update all the colours in the palette
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
@@ -184,6 +153,7 @@ const useStyles = makeStyles((theme) => ({
       justifyContent: "center",
       height: "100vh",
     },
+
     [theme.breakpoints.down("sm")]: {
       width: "85vw",
     },
@@ -193,16 +163,10 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     flexDirection: "column",
     marginLeft: theme.spacing(8),
-    color: "rosybrown",
+    color: theme.palette.primary.contrastText,
     marginBottom: "2vw",
   },
-  checkboxLabel: {
-    fontSize: "1.1rem",
 
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "0.9rem",
-    },
-  },
   switchGrid: {
     marginTop: theme.spacing(3),
   },
