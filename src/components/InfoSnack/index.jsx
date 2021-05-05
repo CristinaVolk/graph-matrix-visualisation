@@ -54,12 +54,14 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   snackContentRoot: {
-    background: theme.palette.secondary.dark,
+    background: "linear-gradient(180deg, black, #0a313c)",
+    border: "solid 1px #333333",
+    borderRadius: theme.spacing(1),
   },
   snackContentMessage: {
     wordBreak: "break-word",
     fontWeight: 300,
     lineHeight: `${theme.spacing(3)}px`,
-    color: theme.palette.primary.contrastText,
+    color: "#ececec",
   },
 }));
