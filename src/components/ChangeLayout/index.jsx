@@ -53,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
   },
   boxTitle: {
     fontSize: "1.1rem",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "0.9rem",
+    },
   },
   layoutButton: {
     width: "120px",

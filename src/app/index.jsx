@@ -110,7 +110,11 @@ const App = () => {
             onClose={handleClose}
           />
         </Grid>
-        <Grid container className={classes.toolBarContainer}>
+        <Grid
+          container
+          alignItems='center'
+          className={classes.toolBarContainer}
+        >
           <ChangeLayout changeLayout={doLayout} />
 
           <Typography
@@ -160,11 +164,13 @@ const useStyles = makeStyles((theme) => ({
     height: "92vh",
     width: "65vw",
     margin: `${theme.spacing(4)}px 0`,
+
+    [theme.breakpoints.down("sm")]: {
+      width: "85vw",
+    },
   },
   toolBarContainer: {
-    display: "flex",
     flexFlow: "column wrap",
-    alignItems: "center",
     width: "30vw",
     height: "92vh",
     background: "rgb(0 0 0 / 40%)",
@@ -175,6 +181,11 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: "row",
       width: "65vw",
       marginBottom: theme.spacing(4),
+      justifyContent: "center",
+      height: "100vh",
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "85vw",
     },
   },
   formGroupFrequrncy: {
@@ -187,6 +198,10 @@ const useStyles = makeStyles((theme) => ({
   },
   checkboxLabel: {
     fontSize: "1.1rem",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "0.9rem",
+    },
   },
   switchGrid: {
     marginTop: theme.spacing(3),

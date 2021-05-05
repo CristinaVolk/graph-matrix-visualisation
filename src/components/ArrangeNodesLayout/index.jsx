@@ -25,7 +25,7 @@ export function ArrangeNodesLayout({ arrangeNodesFromGroup }) {
         variant='subtitle1'
         align='center'
       >
-        Arrange nodes from a single chapter
+        Arrange names from a single chapter
       </Typography>
       <ButtonGroup
         orientation='horizontal'
@@ -59,6 +59,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     fontSize: "1.1rem",
     marginBottom: "1vw",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "0.9rem",
+    },
   },
   arrangeButtonGroup: {
     flexWrap: "wrap",

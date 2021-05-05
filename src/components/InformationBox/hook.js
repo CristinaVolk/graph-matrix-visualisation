@@ -8,10 +8,10 @@ export function useComponent() {
       ID: link.id,
       Node_Source_Id: link.id1,
       Node_Target_Id: link.id2,
-      Node_Source_Name: link.d.sourceNode,
-      Node_Target_Name: link.d.targetNode,
-      Frequency: link.d.frequency,
-      Width: link.w,
+      First_Character_Name: link.d.sourceNode,
+      Character: link.d.targetNode,
+      Occurrence_in_the_chapter: link.d.frequency,
+      Width_of_the_link: link.w,
     };
   };
 
