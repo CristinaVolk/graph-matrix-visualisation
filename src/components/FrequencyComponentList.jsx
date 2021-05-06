@@ -7,12 +7,6 @@ import { CustomCheckbox } from "../components/CustomCheckbox";
 import { CustomSwitch } from "../components/CustomSwitch";
 
 export function FrequencyComponentList({ checkboxList, switcherList }) {
-  const {
-    lowFrequentCheckBox,
-    middleFrequentCheckBox,
-    highFrequentCheckBox,
-  } = checkboxList;
-
   const { maxFrequentSwitch, minFrequentSwitch } = switcherList;
 
   const classes = useStyles();
@@ -26,12 +20,16 @@ export function FrequencyComponentList({ checkboxList, switcherList }) {
         variant='subtitle1'
         align='center'
       >
-        Filter chapter characters data by frequency
+        Filter Hugo's characters by frequency
       </Typography>
       <FormGroup component='fieldset' className={classes.formGroupFrequrncy}>
-        <CustomCheckbox checkbox={lowFrequentCheckBox} />
-        <CustomCheckbox checkbox={middleFrequentCheckBox} />
-        <CustomCheckbox checkbox={highFrequentCheckBox} />
+        {checkboxList.map((frequencyCheckbox) => (
+          <CustomCheckbox
+            key={frequencyCheckbox.boxName}
+            checkbox={frequencyCheckbox}
+          />
+        ))}
+
         <Grid container className={classes.switchGrid}>
           <CustomSwitch toogler={maxFrequentSwitch && maxFrequentSwitch} />
           <CustomSwitch toogler={minFrequentSwitch && minFrequentSwitch} />
@@ -63,6 +61,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 FrequencyComponentList.propTypes = {
-  checkboxList: PropTypes.object,
+  checkboxList: PropTypes.array,
   switcherList: PropTypes.object,
 };

@@ -173,15 +173,15 @@ export function useFilterLinks() {
     });
   };
 
-  const frequencyCheckboxList = {
-    lowFrequentCheckBox: {
+  const frequencyCheckboxList = [
+    {
       title: "Low: less than 5",
       boxName: "low",
       checked: checkboxState.low,
       handleChange: checkFrequency,
       disabled: disabledCheckbox,
     },
-    middleFrequentCheckBox: {
+    {
       title: "Middle: between 5 & 9",
       boxName: "middle",
       checked: checkboxState.middle,
@@ -189,14 +189,14 @@ export function useFilterLinks() {
       disabled: disabledCheckbox,
     },
 
-    highFrequentCheckBox: {
+    {
       title: "High: more than 9",
       boxName: "high",
       checked: checkboxState.high,
       handleChange: checkFrequency,
       disabled: disabledCheckbox,
     },
-  };
+  ];
 
   const extremeSwitcherList = {
     maxFrequentSwitch: {
