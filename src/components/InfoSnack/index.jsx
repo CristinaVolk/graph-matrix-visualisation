@@ -24,7 +24,7 @@ export function InformationSnack() {
   );
 
   return (
-    <div>
+    <div className={classes.snackContainer}>
       <Button color='secondary' onClick={handleClick(SlideTransition)}>
         For your Information :)
       </Button>
@@ -44,6 +44,15 @@ export function InformationSnack() {
 }
 
 const useStyles = makeStyles((theme) => ({
+  snackContainer: {
+    position: "absolute",
+    right: "32px",
+    bottom: "16px",
+
+    [theme.breakpoints.down("md")]: {
+      position: "unset",
+    },
+  },
   snackRoot: {
     width: "30%",
     margin: theme.spacing(1),
@@ -54,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   snackContentRoot: {
-    background: "linear-gradient(180deg, black, #0a313c)",
+    background: "linear-gradient(180deg, black, #012c38)",
     border: "solid 1px #333333",
     borderRadius: theme.spacing(1),
   },

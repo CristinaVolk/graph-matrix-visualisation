@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
   boxTitle: {
     fontSize: "1.1rem",
+    marginBottom: theme.spacing(1),
 
     [theme.breakpoints.down("sm")]: {
       fontSize: "0.9rem",

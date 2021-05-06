@@ -18,7 +18,7 @@ export const chartOptions = {
 
 export const zoomOptions = {
   animate: true,
-  time: 300,
+  time: 700,
 };
 
 export const arrangeOptions = {
