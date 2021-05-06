@@ -54,14 +54,9 @@ const useStyles = makeStyles((theme) => ({
   boxTitle: {
     fontSize: "1.1rem",
     marginBottom: theme.spacing(1),
-
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "0.9rem",
-    },
   },
   layoutButton: {
-    width: "120px",
-    fontSize: "0.7em",
+    width: theme.spacing(15),
   },
 }));
 

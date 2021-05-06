@@ -46,8 +46,8 @@ export function InformationSnack() {
 const useStyles = makeStyles((theme) => ({
   snackContainer: {
     position: "absolute",
-    right: "32px",
-    bottom: "16px",
+    right: theme.spacing(4),
+    bottom: theme.spacing(4),
 
     [theme.breakpoints.down("md")]: {
       position: "unset",
@@ -71,6 +71,6 @@ const useStyles = makeStyles((theme) => ({
     wordBreak: "break-word",
     fontWeight: 300,
     lineHeight: `${theme.spacing(3)}px`,
-    color: "#ececec",
+    color: theme.palette.secondary.light,
   },
 }));

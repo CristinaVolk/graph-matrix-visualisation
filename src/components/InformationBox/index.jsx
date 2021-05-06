@@ -45,7 +45,7 @@ export function InformationBox({ open, selectedItem, onClose }) {
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
-    background: "#0c2531",
+    background: theme.palette.primary.dark,
     color: "rgb(213 221 255)",
     borderRadius: theme.spacing(1),
   },

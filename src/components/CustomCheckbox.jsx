@@ -9,9 +9,6 @@ export function CustomCheckbox({ checkbox }) {
     <FormControlLabel
       className={classes.root}
       disabled={disabled}
-      classes={{
-        label: classes.label,
-      }}
       control={
         <Checkbox
           onChange={(event) => handleChange(event)}
@@ -29,9 +26,6 @@ export function CustomCheckbox({ checkbox }) {
 const useStyles = makeStyles((theme) => ({
   colorSecondary: {
     padding: "4px",
-  },
-  label: {
-    fontSize: "1em",
   },
 }));
 
