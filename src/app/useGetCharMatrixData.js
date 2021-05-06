@@ -37,6 +37,9 @@ export function useGetCharMatrixData() {
           group: singleNode.group,
           title: `${singleNode.name}`,
         },
+        e: 6,
+        ff: "Roboto, Helvetica, Arial, sans-serif",
+        fs: 10,
       };
     });
 

@@ -60,11 +60,8 @@ const App = () => {
       chartRef.current.component.filter((item) => item.d.checked === true, {
         type: "link",
       });
-      doLayout("organic");
     }
-
-    console.log(chartRef.current);
-  }, [chartRef, doLayout]);
+  }, [chartRef, chartContent, doLayout]);
 
   chartRef.current &&
     chartRef.current.component &&
@@ -84,10 +81,16 @@ const App = () => {
       );
   };
 
+  const loadedChart = () => {
+    chartRef.current && doLayout("organic");
+  };
+
   return (
     !loading && (
       <Grid container className={classes.mainGrid}>
         <Chart
+          animateOnLoad={true}
+          ready={loadedChart}
           ref={chartRef}
           options={chartOptions}
           data={!loading && chartContent}
