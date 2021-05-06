@@ -1,5 +1,5 @@
 import "keylines";
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Chart } from "./react-keylines";
 import { Grid } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
@@ -10,8 +10,7 @@ import { ChangeLayout } from "../components/ChangeLayout";
 import { InformationBox } from "../components/InformationBox";
 import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
 import { InformationSnack } from "../components/InfoSnack";
-import { /*debounce,*/ validateLayoutName } from "../utils/tools";
-import { chartOptions, zoomOptions, arrangeOptions } from "../utils/appData";
+import { chartOptions } from "../utils/appData";
 import { FrequencyComponentList } from "../components/FrequencyComponentList";
 
 const App = () => {
@@ -19,9 +18,11 @@ const App = () => {
     chartRef,
     open,
     selectedItem,
+    doLayout,
+    loadedChart,
     clickNodeHandler,
     handleClose,
-    nodeIdsToArrange,
+    arrangeNodesFromGroup,
   } = useComponent();
 
   const {
@@ -35,25 +36,6 @@ const App = () => {
   const { maxFrequentSwitch, minFrequentSwitch } = extremeSwitcherList;
 
   const classes = useStyles();
-
-  const doLayout = useCallback(
-    async (layoutName) => {
-      await chartRef.current.component.layout(
-        validateLayoutName(layoutName) ? layoutName : "organic",
-        {
-          consistent: true,
-          packing: "adaptive",
-          animate: true,
-          time: 1000,
-          tidy: true,
-          spacing: "stretched",
-          tightness: 1,
-        },
-      );
-      await chartRef.current.component.zoom("fit", zoomOptions);
-    },
-    [chartRef],
-  );
 
   useEffect(() => {
     if (chartRef.current.component) {
@@ -70,20 +52,6 @@ const App = () => {
         ? setDisabledCheckbox(true)
         : setDisabledCheckbox(false);
     });
-
-  const arrangeNodesFromGroup = (groupNumber) => {
-    chartRef.current &&
-      chartRef.current.component.arrange(
-        "circle",
-        nodeIdsToArrange(groupNumber),
-        arrangeOptions,
-        chartRef.current.component.zoom("fit", zoomOptions),
-      );
-  };
-
-  const loadedChart = () => {
-    chartRef.current && doLayout("organic");
-  };
 
   return (
     !loading && (

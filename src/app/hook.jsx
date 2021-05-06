@@ -1,6 +1,8 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 
 import { useGetCharMatrixData } from "./useGetCharMatrixData";
+import { /*debounce,*/ validateLayoutName } from "../utils/tools";
+import { zoomOptions, arrangeOptions } from "../utils/appData";
 
 export function useComponent() {
   const chartRef = useRef(null);
@@ -14,6 +16,27 @@ export function useComponent() {
     fetchCharMatrixData,
     setChartContent,
   } = useGetCharMatrixData();
+
+  const doLayout = useCallback(
+    async (layoutName) => {
+      await chartRef.current.component.layout(
+        validateLayoutName(layoutName) ? layoutName : "organic",
+        {
+          consistent: true,
+          packing: "adaptive",
+          animate: true,
+          time: 1000,
+          tidy: true,
+          spacing: "stretched",
+          tightness: 1,
+        },
+      );
+      await chartRef.current.component.zoom("fit", zoomOptions);
+    },
+    [chartRef],
+  );
+
+  const loadedChart = () => chartRef.current && doLayout("organic");
 
   const handleClickOpen = () => setOpen(true);
 
@@ -43,6 +66,16 @@ export function useComponent() {
     [chartContent.items],
   );
 
+  const arrangeNodesFromGroup = (groupNumber) => {
+    chartRef.current &&
+      chartRef.current.component.arrange(
+        "circle",
+        nodeIdsToArrange(groupNumber),
+        arrangeOptions,
+        chartRef.current.component.zoom("fit", zoomOptions),
+      );
+  };
+
   useEffect(() => {
     fetchCharMatrixData();
 
@@ -55,9 +88,11 @@ export function useComponent() {
     loading,
     open,
     selectedItem,
+    doLayout,
+    loadedChart,
     setChartContent,
     clickNodeHandler,
     handleClose,
-    nodeIdsToArrange,
+    arrangeNodesFromGroup,
   };
 }
