@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     marginLeft: theme.spacing(8),
     color: theme.palette.primary.contrastText,
-    marginBottom: "2vw",
+    marginBottom: "1vw",
   },
   switchGrid: {
     marginTop: theme.spacing(3),
