@@ -121,12 +121,13 @@ const useStyles = makeStyles((theme) => ({
     "& > h6": {
       width: "90%",
     },
+
     [theme.breakpoints.down("md")]: {
       flexDirection: "row",
       width: "65vw",
       marginBottom: theme.spacing(4),
       justifyContent: "center",
-      height: "100vh",
+      height: "fit-content",
     },
 
     [theme.breakpoints.down("sm")]: {
