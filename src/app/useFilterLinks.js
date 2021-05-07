@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useComponent } from "./hook";
 import { assending, descending } from "../utils/tools";
 
+const maxColour = "rgb(255, 112, 112)";
+const minColour = "rgb(92, 187, 255)";
+
 export function useFilterLinks() {
   const { chartContent, loading, setChartContent } = useComponent();
   const [disabledCheckbox, setDisabledCheckbox] = useState(false);
@@ -95,19 +98,33 @@ export function useFilterLinks() {
     return nodeIds;
   };
 
+  const validateHaloColour = (item, colour) => {
+    if (!item.ha0) {
+      return true;
+    } else {
+      if (colour === maxColour && item.ha0.c !== maxColour) {
+        return true;
+      }
+      if (colour === minColour && item.ha0.c === maxColour) {
+        return false;
+      }
+    }
+  };
+
   const applyHalo = (nodeIdsWithExtremeFrequency, colour) => {
     if (chartContent) {
       return chartContent.items.map((item) => {
         if (
           item.type === "node" &&
-          nodeIdsWithExtremeFrequency.includes(item.id)
+          nodeIdsWithExtremeFrequency.includes(item.id) &&
+          validateHaloColour(item, colour)
         ) {
           return {
             ...item,
             ha0: {
               c: colour,
               r: 50,
-              w: 30,
+              w: 35,
             },
           };
         } else {
@@ -117,9 +134,14 @@ export function useFilterLinks() {
     }
   };
 
-  const removeHalo = (nodeIds) => {
+  const removeHalo = (nodeIds, colour) => {
     return chartContent.items.map((item) => {
-      if (item.type === "node" && nodeIds.includes(item.id)) {
+      if (
+        item.type === "node" &&
+        nodeIds.includes(item.id) &&
+        item.ha0 &&
+        item.ha0.c === colour
+      ) {
         delete item.ha0;
         return item;
       }
@@ -134,12 +156,12 @@ export function useFilterLinks() {
     });
 
     let updatedChartContent = {};
-    const colour = "rgb(255, 112, 112)";
+
     const nodeIdsWithMaxFrequency = findNodeIdsWithExtremeFrequency("max");
     if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency, colour);
+      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency, maxColour);
     } else {
-      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency);
+      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency, maxColour);
     }
 
     setChartContent((prevState) => {
@@ -151,7 +173,6 @@ export function useFilterLinks() {
   };
 
   const onChangeMinFrequency = (event) => {
-    const colour = "rgb(112, 234, 255)";
     setCheckMaxMinFrequency({
       ...checkMaxMinFrequency,
       [event.target.name]: event.target.checked,
@@ -160,9 +181,9 @@ export function useFilterLinks() {
     let updatedChartContent = {};
     const nodeIdsWithMinFrequency = findNodeIdsWithExtremeFrequency("min");
     if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMinFrequency, colour);
+      updatedChartContent = applyHalo(nodeIdsWithMinFrequency, minColour);
     } else {
-      updatedChartContent = removeHalo(nodeIdsWithMinFrequency);
+      updatedChartContent = removeHalo(nodeIdsWithMinFrequency, minColour);
     }
 
     setChartContent((prevState) => {
