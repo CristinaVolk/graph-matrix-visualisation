@@ -13,6 +13,7 @@ import { useComponent } from "./hook";
 
 export function InformationBox({ open, selectedItem, onClose }) {
   const { shapeSelectedItem } = useComponent();
+  const shapedItem = selectedItem && shapeSelectedItem(selectedItem);
   const classes = useStyles();
 
   return (
@@ -26,15 +27,12 @@ export function InformationBox({ open, selectedItem, onClose }) {
         Key information about the item selected
       </DialogTitle>
       <List className={classes.dialogList}>
-        {selectedItem &&
-          shapeSelectedItem(selectedItem) &&
-          Object.keys(shapeSelectedItem(selectedItem)).map((property) => (
+        {shapedItem &&
+          Object.keys(shapedItem).map((property) => (
             <ListItem key={property} className={classes.dialogListItem}>
               <ListItemText
                 className={classes.dialogListItemText}
-                primary={`${property} : ${
-                  shapeSelectedItem(selectedItem)[property]
-                }`}
+                primary={`${property} : ${shapedItem[property]}`}
               />
             </ListItem>
           ))}

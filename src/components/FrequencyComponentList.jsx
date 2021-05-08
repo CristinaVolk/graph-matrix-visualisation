@@ -31,8 +31,8 @@ export function FrequencyComponentList({ checkboxList, switcherList }) {
         ))}
 
         <Grid container className={classes.switchGrid}>
-          <CustomSwitch toogler={maxFrequentSwitch && maxFrequentSwitch} />
-          <CustomSwitch toogler={minFrequentSwitch && minFrequentSwitch} />
+          <CustomSwitch toogler={maxFrequentSwitch} />
+          <CustomSwitch toogler={minFrequentSwitch} />
         </Grid>
       </FormGroup>
     </React.Fragment>

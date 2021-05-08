@@ -11,7 +11,7 @@ export function CustomCheckbox({ checkbox }) {
       disabled={disabled}
       control={
         <Checkbox
-          onChange={(event) => handleChange(event)}
+          onChange={handleChange}
           id={title}
           checked={checked}
           name={boxName}
