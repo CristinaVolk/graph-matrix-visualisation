@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Slide } from "@material-ui/core/";
+import { SlideTransition } from "./SlideTransition";
 
 export function useComponent() {
   const [state, setState] = useState({
@@ -7,18 +8,18 @@ export function useComponent() {
     Transition: Slide,
   });
 
-  const handleClick = (Transition) => () => {
+  const handleClick = () => {
     setState({
       open: true,
-      Transition,
+      SlideTransition,
     });
   };
 
   const handleClose = () => {
-    setState({
-      ...state,
-      open: false,
+    setState((prevState) => {
+      return { ...prevState, open: false };
     });
   };
+
   return { state, handleClick, handleClose };
 }

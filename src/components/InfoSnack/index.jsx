@@ -1,13 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Snackbar, Slide, SnackbarContent } from "@material-ui/core/";
+import { Button, Snackbar, SnackbarContent } from "@material-ui/core/";
 
 import { useComponent } from "./hook";
 import { snackContent } from "../../utils/appData";
-
-function SlideTransition(props) {
-  return <Slide {...props} direction='up' />;
-}
 
 export function InformationSnack() {
   const { state, handleClick, handleClose } = useComponent();
@@ -25,7 +21,7 @@ export function InformationSnack() {
 
   return (
     <div className={classes.snackContainer}>
-      <Button color='secondary' onClick={handleClick(SlideTransition)}>
+      <Button color='secondary' onClick={handleClick}>
         For your Information
       </Button>
       <Snackbar
