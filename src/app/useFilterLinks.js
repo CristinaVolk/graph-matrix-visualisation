@@ -29,7 +29,7 @@ export function useFilterLinks() {
             ...item,
             d: { ...item.d, checked: true },
           }
-        : { ...item },
+        : item,
     );
   };
 
@@ -45,17 +45,14 @@ export function useFilterLinks() {
           d: { ...item.d, checked: false },
         };
       }
-      return { ...item };
+      return item;
     });
   };
 
   const filterByFrequency = (event, options) => {
-    let filteredFreqLinks = [];
-    if (event.target.checked) {
-      filteredFreqLinks = filterFreqLinks(options);
-    } else {
-      filteredFreqLinks = unfilterFreqLinks(options);
-    }
+    const filteredFreqLinks = event.target.checked
+      ? filterFreqLinks(options)
+      : unfilterFreqLinks(options);
 
     setChartContent((prevState) => {
       return { ...prevState, items: filteredFreqLinks };
@@ -101,13 +98,12 @@ export function useFilterLinks() {
   const validateHaloColour = (item, colour) => {
     if (!item.ha0) {
       return true;
-    } else {
-      if (colour === maxColour && item.ha0.c !== maxColour) {
-        return true;
-      }
-      if (colour === minColour && item.ha0.c === maxColour) {
-        return false;
-      }
+    }
+    if (colour === maxColour && item.ha0.c !== maxColour) {
+      return true;
+    }
+    if (colour === minColour && item.ha0.c === maxColour) {
+      return false;
     }
   };
 
@@ -128,7 +124,7 @@ export function useFilterLinks() {
             },
           };
         } else {
-          return { ...item };
+          return item;
         }
       });
     }
@@ -155,14 +151,10 @@ export function useFilterLinks() {
       [event.target.name]: event.target.checked,
     });
 
-    let updatedChartContent = {};
-
     const nodeIdsWithMaxFrequency = findNodeIdsWithExtremeFrequency("max");
-    if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency, maxColour);
-    } else {
-      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency, maxColour);
-    }
+    const updatedChartContent = event.target.checked
+      ? applyHalo(nodeIdsWithMaxFrequency, maxColour)
+      : removeHalo(nodeIdsWithMaxFrequency, maxColour);
 
     setChartContent((prevState) => {
       return {
@@ -178,13 +170,10 @@ export function useFilterLinks() {
       [event.target.name]: event.target.checked,
     });
 
-    let updatedChartContent = {};
     const nodeIdsWithMinFrequency = findNodeIdsWithExtremeFrequency("min");
-    if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMinFrequency, minColour);
-    } else {
-      updatedChartContent = removeHalo(nodeIdsWithMinFrequency, minColour);
-    }
+    let updatedChartContent = event.target.checked
+      ? applyHalo(nodeIdsWithMinFrequency, minColour)
+      : removeHalo(nodeIdsWithMinFrequency, minColour);
 
     setChartContent((prevState) => {
       return {
