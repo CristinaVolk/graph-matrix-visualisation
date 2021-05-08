@@ -4,6 +4,7 @@ import { Chart } from "./react-keylines";
 import { Grid } from "@material-ui/core/";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { Loading } from "../components/Loading";
 import { useComponent } from "./hook";
 import { useFilterLinks } from "./useFilterLinks";
 import { ChangeLayout } from "../components/ChangeLayout";
@@ -38,58 +39,53 @@ const App = () => {
   const classes = useStyles();
 
   useEffect(() => {
-    if (chartRef.current.component) {
+    if (chartRef.current && chartRef.current.component) {
       chartRef.current.component.filter((item) => item.d.checked === true, {
         type: "link",
       });
     }
   }, [chartRef, chartContent, doLayout]);
 
-  chartRef.current &&
-    chartRef.current.component &&
+  chartRef.current?.component &&
     chartRef.current.component.on("progress", ({ progress }) => {
       progress < 1 || maxFrequentSwitch.checked || minFrequentSwitch.checked
         ? setDisabledCheckbox(true)
         : setDisabledCheckbox(false);
     });
 
-  return (
-    !loading && (
-      <Grid container className={classes.mainGrid}>
-        <Chart
-          animateOnLoad={true}
-          ready={loadedChart}
-          ref={chartRef}
-          options={chartOptions}
-          data={!loading && chartContent}
-          containerClassName={classes.chartRoot}
-          click={clickNodeHandler}
+  return loading ? (
+    <Loading />
+  ) : (
+    <Grid container className={classes.mainGrid}>
+      <Chart
+        animateOnLoad={true}
+        ready={loadedChart}
+        ref={chartRef}
+        options={chartOptions}
+        data={!loading && chartContent}
+        containerClassName={classes.chartRoot}
+        click={clickNodeHandler}
+      />
+
+      <InformationBox
+        selectedItem={selectedItem}
+        open={open}
+        onClose={handleClose}
+      />
+
+      <Grid container alignItems='center' className={classes.toolBarContainer}>
+        <ChangeLayout changeLayout={doLayout} />
+
+        <FrequencyComponentList
+          checkboxList={frequencyCheckboxList}
+          switcherList={extremeSwitcherList}
         />
 
-        <InformationBox
-          selectedItem={selectedItem}
-          open={open}
-          onClose={handleClose}
-        />
+        <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
 
-        <Grid
-          container
-          alignItems='center'
-          className={classes.toolBarContainer}
-        >
-          <ChangeLayout changeLayout={doLayout} />
-
-          <FrequencyComponentList
-            checkboxList={frequencyCheckboxList}
-            switcherList={extremeSwitcherList}
-          />
-
-          <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
-
-          <InformationSnack />
-        </Grid>
+        <InformationSnack />
       </Grid>
-    )
+    </Grid>
   );
 };
 
