@@ -7,7 +7,7 @@ import { renderHook } from "@testing-library/react-hooks";
 import * as hooks from "./useGetCharMatrixData";
 import { URL } from "./../utils/appData";
 
-describe("mocking axios requests", function () {
+describe("mocking axios request", function () {
   const mockedDataResponse = {
     nodes: [
       {
@@ -47,66 +47,75 @@ describe("mocking axios requests", function () {
     ],
   };
 
-  describe("across entire suite", function () {
-    beforeEach(function () {
-      moxios.install();
+  beforeEach(function () {
+    moxios.install();
+  });
+
+  afterEach(function () {
+    moxios.uninstall();
+  });
+
+  it("fetches data from URL successfully", function (done) {
+    const mockedfetchCharMatrixData = jest.fn();
+    hooks.useGetCharMatrixData = jest.fn().mockReturnValue({
+      fetchCharMatrixData: mockedfetchCharMatrixData,
     });
 
-    afterEach(function () {
-      moxios.uninstall();
-    });
+    renderHook(() => hooks.useGetCharMatrixData().fetchCharMatrixData());
 
-    it("just for a single spec", function (done) {
-      const mockedfetchCharMatrixData = jest.fn();
-      hooks.useGetCharMatrixData = jest.fn().mockReturnValue({
-        fetchCharMatrixData: mockedfetchCharMatrixData,
+    moxios.withMock(() => {
+      let onFulfilled = sinon.spy();
+      axios.get(URL).then(onFulfilled);
+
+      moxios.wait(() => {
+        let request = moxios.requests.mostRecent();
+        request
+          .respondWith({
+            status: 200,
+            response: mockedDataResponse,
+          })
+          .then(() => {
+            strictEqual(onFulfilled.called, true);
+            done();
+          });
       });
+    });
+    expect(mockedfetchCharMatrixData).toHaveBeenCalled();
+  });
 
-      renderHook(() => hooks.useGetCharMatrixData().fetchCharMatrixData());
+  it("fetches with rejection of the request", function (done) {
+    const errorResp = {
+      status: 400,
+      response: { message: "invalid data" },
+    };
 
-      moxios.withMock(function () {
-        let onFulfilled = sinon.spy();
-        axios.get(URL).then(onFulfilled);
-
-        moxios.wait(function () {
-          let request = moxios.requests.mostRecent();
-          request
-            .respondWith({
-              status: 200,
-              response: mockedDataResponse,
-            })
-            .then(function () {
-              strictEqual(onFulfilled.called, true);
-              done();
-            });
-        });
-      });
-      expect(mockedfetchCharMatrixData).toHaveBeenCalled();
+    const mockedfetchCharMatrixData = jest.fn();
+    hooks.useGetCharMatrixData = jest.fn().mockReturnValue({
+      fetchCharMatrixData: mockedfetchCharMatrixData,
     });
 
-    // it("Should reject the request", function (done) {
-    //   const errorResp = {
-    //     status: 400,
-    //     response: { message: "invalid data" },
-    //   };
+    renderHook(() => hooks.useGetCharMatrixData().fetchCharMatrixData());
 
-    //   moxios.withMock(function () {
-    //     let onFulfilled = sinon.spy();
-    //     axios
-    //       .get("https://bost.ocks.org/mike/miserables/miserables.json")
-    //       .then(onFulfilled);
+    let onFulfilled = sinon.spy();
+    axios.get(URL).then(onFulfilled);
 
-    //     moxios
-    //       .wait(function () {
-    //         let request = moxios.requests.mostRecent();
-    //         request.reject(errorResp);
-    //       })
-    //       .catch(function (err) {
-    //         strictEqual(err.status, errorResp.status);
-    //         strictEqual(err.response.message, errorResp.response.message);
-    //         done();
-    //       });
+    // moxios.wait(() => {
+    //   const request = moxios.requests.mostRecent();
+    //   request.respondWith(errorResp).then(() => {
+    //     try {
+    //       //strictEqual(onFulfilled.called, true);
+    //       //strictEqual(onFulfilled.getCall(0).args[0].status, 400);
+    //       // done();
+    //     } catch (err) {
+    //       //done.fail(err);
+    //       console.log(err);
+    //     }
     //   });
     // });
+
+    moxios.wait(() => {
+      let request = moxios.requests.mostRecent();
+      request.respondWith(errorResp);
+    });
   });
 });
