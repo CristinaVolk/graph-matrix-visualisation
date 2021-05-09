@@ -1,3 +1,5 @@
+export const URL = "https://bost.ocks.org/mike/miserables/miserables.json";
+
 export const data = {
   type: "LinkChart",
   items: [],

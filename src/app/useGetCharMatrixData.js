@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { useHttp } from "../hooks/http.hook";
-import { data } from "../utils/appData";
+import { URL, data } from "../utils/appData";
 
 export function useGetCharMatrixData() {
   const [chartContent, setChartContent] = useState(data);
@@ -67,9 +67,7 @@ export function useGetCharMatrixData() {
   }, []);
 
   const fetchCharMatrixData = useCallback(async () => {
-    const fetched = await request(
-      "https://bost.ocks.org/mike/miserables/miserables.json",
-    );
+    const fetched = await request(URL);
 
     setChartContent((prevState) => {
       return { ...prevState, items: renderContent(fetched) };
