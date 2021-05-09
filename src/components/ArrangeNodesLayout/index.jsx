@@ -5,7 +5,7 @@ import { Grid, Button, ButtonGroup, Typography } from "@material-ui/core";
 
 import { useComponent } from "./hook";
 
-const chapters = [0, 1, 2, 3, 4, 5, 7, 8, 10];
+export const chapters = [0, 1, 2, 3, 4, 5, 7, 8, 10];
 
 export function ArrangeNodesLayout({ arrangeNodesFromGroup }) {
   const { arrangeNodes } = useComponent(arrangeNodesFromGroup);
