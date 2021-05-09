@@ -1,8 +1,8 @@
-import { renderHook } from "@testing-library/react-hooks";
-import { render } from "@testing-library/react";
+import { act } from "@testing-library/react-hooks";
+import { render, fireEvent } from "@testing-library/react";
 
 import { ArrangeNodesLayout, chapters } from ".";
-import { useComponent } from "./hook";
+import * as hooks from "./hook";
 
 describe("ArrangeNodesLayout component", () => {
   const arrangeNodesFromGroup = jest.fn();
@@ -23,8 +23,22 @@ describe("ArrangeNodesLayout component", () => {
     });
   });
 
-  it("renders the custom hook", () => {
-    const { result } = renderHook(() => useComponent(arrangeNodesFromGroup));
-    expect(result.current.arrangeNodes).toBeInstanceOf(Function);
+  it.only("renders the custom hook and fires click event on the button to arrange nodes", () => {
+    const mockedArrangeNodes = jest.fn();
+    hooks.useComponent = jest.fn().mockReturnValue({
+      arrangeNodes: mockedArrangeNodes,
+    });
+    const { getAllByRole } = render(
+      <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />,
+    );
+
+    const buttonListElements = getAllByRole("button");
+
+    act(() => {
+      buttonListElements.forEach((buttonElement) => {
+        fireEvent.click(buttonElement);
+      });
+    });
+    expect(mockedArrangeNodes).toHaveBeenCalledTimes(9);
   });
 });

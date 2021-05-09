@@ -1,13 +1,12 @@
-import { renderHook, act } from "@testing-library/react-hooks";
+import { act } from "@testing-library/react-hooks";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 import { ChangeLayout } from ".";
-import { useComponent } from "./hook";
+import * as hooks from "./hook";
 import { layouts } from "../../utils/appData";
 
 describe("ChangeLayout component", () => {
   const changeLayout = jest.fn();
-
   it("renders the list of buttons to change the layout", () => {
     const { getAllByRole, getByText } = render(
       <ChangeLayout changeLayout={changeLayout} />,
@@ -17,7 +16,6 @@ describe("ChangeLayout component", () => {
       button.querySelector("span"),
     );
     screen.debug();
-
     expect(getByText(/choose/i)).toBeInTheDocument();
     expect(buttonList.length).toBe(5);
     spanButtonElements.forEach((spanEl, index) => {
@@ -25,18 +23,22 @@ describe("ChangeLayout component", () => {
     });
   });
 
-  it("renders the custom hook", () => {
-    const { result } = renderHook(() => useComponent(changeLayout));
-    const { getAllByRole, getByText } = render(
+  it.only("renders the custom hook and fires click event on the button to run the layout", () => {
+    const mockedRunLayout = jest.fn();
+    hooks.useComponent = jest.fn().mockReturnValue({
+      runLayout: mockedRunLayout,
+    });
+    const { getAllByRole } = render(
       <ChangeLayout changeLayout={changeLayout} />,
     );
 
+    const buttonListElements = getAllByRole("button");
+
     act(() => {
-      fireEvent.click(getByText(layouts[0]));
+      buttonListElements.forEach((buttonElement) => {
+        fireEvent.click(buttonElement);
+      });
     });
-
-    expect(result.current.runLayout).toHaveBeenCalled();
-
-    expect(result.current.runLayout).toBeInstanceOf(Function);
+    expect(mockedRunLayout).toHaveBeenCalledTimes(5);
   });
 });
