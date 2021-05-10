@@ -2,8 +2,8 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { renderHook } from "@testing-library/react-hooks";
 
-import { useComponent } from "./../../app/hook";
 import { InformationBox } from ".";
+import { useComponent } from "./../../app/hook";
 
 const component = (open, selectedItem, onClose) => (
   <InformationBox open={open} selectedItem={selectedItem} onClose={onClose} />
@@ -45,20 +45,19 @@ describe("Information Box component", () => {
   const { selectedItem, handleClose } = hookResult.result.current;
   const shapeSelectedItem = jest.fn();
 
-  it("renders the component in the closed state", () => {
+  it.only("renders the component in the closed state", () => {
     const { queryByRole } = render(component(false, selectedItem, handleClose));
     const dialog = queryByRole("dialog");
     expect(dialog).not.toBeInTheDocument();
   });
 
-  it("renders the component with in the open state", () => {
+  it.only("renders the component with in the open state", () => {
     const { queryByRole } = render(component(true, selectedItem, handleClose));
     const dialog = queryByRole("dialog");
-
     expect(dialog).toBeInTheDocument();
   });
 
-  it("renders the link as the selectedItem", () => {
+  it.only("renders the link as the selectedItem", () => {
     const { getByText } = render(component(true, mockedLink, handleClose));
 
     shapeSelectedItem.mockReturnValueOnce({
@@ -74,12 +73,12 @@ describe("Information Box component", () => {
 
     const link = shapeSelectedItem();
     const linkRegExp = new RegExp(link.ID, "i");
-
     const idCellSpanEl = getByText(linkRegExp);
+
     expect(idCellSpanEl).toBeInstanceOf(HTMLSpanElement);
   });
 
-  it("renders the node as the selectedItem", () => {
+  it.only("renders the node as the selectedItem", () => {
     const { getByText } = render(component(true, mockedNode, handleClose));
 
     shapeSelectedItem.mockReturnValueOnce({
@@ -94,8 +93,8 @@ describe("Information Box component", () => {
 
     const node = shapeSelectedItem();
     const nodeRegExp = new RegExp(node.Type, "i");
-
     const typeCellSpanEl = getByText(nodeRegExp);
+
     expect(typeCellSpanEl).toBeInstanceOf(HTMLSpanElement);
   });
 });
