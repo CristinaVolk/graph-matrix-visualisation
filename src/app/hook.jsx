@@ -1,9 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 import { useGetCharMatrixData } from "./useGetCharMatrixData";
+import { validateLayoutName } from "../utils/tools";
+import { zoomOptions, arrangeOptions } from "../utils/appData";
 
 export function useComponent() {
-  const [chart, setChart] = useState(null);
+  const chartRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const {
     chartContent,
@@ -13,40 +17,82 @@ export function useComponent() {
     setChartContent,
   } = useGetCharMatrixData();
 
+  const doLayout = useCallback(
+    async (layoutName) => {
+      await chartRef.current.component.layout(
+        validateLayoutName(layoutName) ? layoutName : "organic",
+        {
+          consistent: true,
+          packing: "adaptive",
+          animate: true,
+          time: 1000,
+          tidy: true,
+          spacing: "stretched",
+          tightness: 1,
+        },
+      );
+      await chartRef.current.component.zoom("fit", zoomOptions);
+    },
+    [chartRef],
+  );
+
+  const loadedChart = () => chartRef.current && doLayout("organic");
+
+  const handleClickOpen = () => setOpen(true);
+
+  const clickNodeHandler = useCallback(({ id }) => {
+    if (chartRef.current.component.getItem(id)) {
+      const item = chartRef.current.component.getItem(id);
+      item.x = chartRef.current.component.viewCoordinates(item.x, item.y).x;
+      item.y = chartRef.current.component.viewCoordinates(item.x, item.y).y;
+      setSelectedItem(item);
+      handleClickOpen();
+    }
+  }, []);
+
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedItem(value);
+  };
+
+  const nodeIdsToArrange = useCallback(
+    (groupNo) => {
+      return chartContent.items
+        .filter(
+          (item) => item.type === "node" && item.d.group === Number(groupNo),
+        )
+        .map((node) => node.id);
+    },
+    [chartContent.items],
+  );
+
+  const arrangeNodesFromGroup = (groupNumber) => {
+    chartRef.current &&
+      chartRef.current.component.arrange(
+        "circle",
+        nodeIdsToArrange(groupNumber),
+        arrangeOptions,
+        chartRef.current.component.zoom("fit", zoomOptions),
+      );
+  };
+
   useEffect(() => {
     fetchCharMatrixData();
 
     return () => clearError();
   }, [clearError, fetchCharMatrixData]);
 
-  const loadedChart = useCallback((chart) => {
-    setChart(chart);
-  }, []);
-
-  const clickNodeHandler = useCallback(
-    ({ id }) => {
-      if (chart.getItem(id)) {
-        const clickedItem = chart.getItem(id);
-
-        console.log(clickedItem);
-
-        const neighbours = chart.graph().neighbours(id).nodes;
-        chart.foreground(
-          (node) => node.id === id || neighbours.includes(node.id),
-        );
-
-        chart.foreground(() => true);
-      }
-    },
-    [chart],
-  );
-
   return {
+    chartRef,
     chartContent,
     loading,
-    chart,
+    open,
+    selectedItem,
+    doLayout,
     loadedChart,
-    clickNodeHandler,
     setChartContent,
+    clickNodeHandler,
+    handleClose,
+    arrangeNodesFromGroup,
   };
 }

@@ -1,152 +1,140 @@
 import "keylines";
-import React, { useState, useEffect, useCallback } from "react";
-import { Chart } from "../react-keylines";
+import React, { useEffect } from "react";
+import { Grid } from "@material-ui/core/";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { useComponent } from "./hook";
-import { Checkbox } from "../checkbox";
-import styles from "./styles.module.css";
 import { useFilterLinks } from "./useFilterLinks";
+import { Loading } from "../components/Loading";
+import { Chart } from "./react-keylines";
+import { InformationBox } from "../components/InformationBox";
+import { ChangeLayout } from "../components/ChangeLayout";
+import { FrequencyComponentList } from "../components/FrequencyComponentList";
+import { ArrangeNodesLayout } from "../components/ArrangeNodesLayout";
+import { InformationSnack } from "../components/InfoSnack";
+import { chartOptions } from "../utils/appData";
 
 const App = () => {
-  const { chart, loadedChart, clickNodeHandler } = useComponent();
-
+  const {
+    chartRef,
+    open,
+    selectedItem,
+    doLayout,
+    loadedChart,
+    clickNodeHandler,
+    handleClose,
+    arrangeNodesFromGroup,
+  } = useComponent();
   const {
     loading,
     chartContent,
-    lowFrequentCheckBox,
-    middleFrequentCheckBox,
-    highFrequentCheckBox,
-    setChartContent,
+    frequencyCheckboxList,
+    extremeSwitcherList,
+    setDisabledCheckbox,
   } = useFilterLinks();
-
-  const [checkMaxFrequency, setCheckMaxFrequency] = useState(false);
-
-  const doLayout = useCallback(() => {
-    return chart
-      .layout("organic", {
-        consistent: true,
-        packing: "adaptive",
-        animate: true,
-        time: 900,
-        tidy: true,
-        spacing: "stretched",
-        tightness: 2,
-      })
-      .then(() => {});
-  }, [chart]);
-
-  const findNodeIdsWithMaxFrequency = () => {
-    const links = chartContent.items.filter(
-      (item) => item.type === "link" && item.d.checked,
-    );
-    const sortedLinks = links.sort(
-      (current, next) => next.d.frequency - current.d.frequency,
-    );
-
-    const nodeIds = sortedLinks
-      .filter((link) => link.d.frequency === sortedLinks[0].d.frequency)
-      .map((filteredResult) => [filteredResult.id1, filteredResult.id2])
-      .flat();
-
-    console.log(
-      sortedLinks.filter(
-        (link) => link.d.frequency === sortedLinks[0].d.frequency,
-      ),
-    );
-
-    console.log(nodeIds);
-
-    return nodeIds;
-  };
-
-  const applyHalo = (nodeIdsWithMaxFrequency) => {
-    if (chartContent) {
-      return chartContent.items.map((item) => {
-        if (item.type === "node" && nodeIdsWithMaxFrequency.includes(item.id)) {
-          console.log(item);
-          return {
-            ...item,
-            ha0: {
-              c: "rgb(112, 234, 255)",
-              r: 50,
-              w: 30,
-            },
-          };
-        } else {
-          return { ...item };
-        }
-      });
-    }
-  };
-
-  const removeHalo = (nodeIdsWithMaxFrequency) => {
-    return chartContent.items.map((item) => {
-      if (item.type === "node") {
-        console.log(item);
-        delete item.ha0;
-        return item;
-      }
-      return item;
-    });
-  };
-
-  const onChangeMaxFrequency = (event) => {
-    console.log(event.target.checked);
-    setCheckMaxFrequency(event.target.checked);
-    let updatedChartContent = {};
-    const nodeIdsWithMaxFrequency = findNodeIdsWithMaxFrequency();
-    if (event.target.checked) {
-      updatedChartContent = applyHalo(nodeIdsWithMaxFrequency);
-    } else {
-      updatedChartContent = removeHalo(nodeIdsWithMaxFrequency);
-    }
-
-    console.log(updatedChartContent);
-
-    setChartContent((prevState) => {
-      return {
-        ...prevState,
-        items: updatedChartContent,
-      };
-    });
-  };
-
-  const maxFrequentCheckBox = {
-    title: "Show maX Frequency",
-    boxName: "maxFrequency",
-    checked: checkMaxFrequency,
-    handleChange: onChangeMaxFrequency,
-  };
+  const { maxFrequentSwitch, minFrequentSwitch } = extremeSwitcherList;
+  const classes = useStyles();
 
   useEffect(() => {
-    if (chart !== null) {
-      //chart.filter((item) => item.d.checked === true, { type: "link" });
-
-      doLayout();
+    if (chartRef.current && chartRef.current.component) {
+      chartRef.current.component.filter((item) => item.d.checked === true, {
+        type: "link",
+      });
     }
+  }, [chartRef, chartContent, doLayout]);
 
-    return () => {};
-  }, [chart, chartContent, doLayout]);
+  chartRef.current?.component &&
+    chartRef.current.component.on("progress", ({ progress }) => {
+      progress < 1 || maxFrequentSwitch.checked || minFrequentSwitch.checked
+        ? setDisabledCheckbox(true) &&
+          chartRef.current.component.lock(true, { wait: true })
+        : setDisabledCheckbox(false);
+    });
 
-  return (
-    !loading && (
-      <>
-        <Chart
-          data={!loading && chartContent}
-          ready={loadedChart}
-          containerClassName={styles.chartContainer}
-          click={clickNodeHandler}
+  return loading ? (
+    <Loading />
+  ) : (
+    <Grid container className={classes.mainGrid}>
+      <Chart
+        animateOnLoad={true}
+        ready={loadedChart}
+        ref={chartRef}
+        options={chartOptions}
+        data={!loading && chartContent}
+        containerClassName={classes.chartRoot}
+        click={clickNodeHandler}
+      />
+      <InformationBox
+        selectedItem={selectedItem}
+        open={open}
+        onClose={handleClose}
+      />
+      <Grid container alignItems='center' className={classes.toolBarContainer}>
+        <ChangeLayout changeLayout={doLayout} />
+        <FrequencyComponentList
+          checkboxList={frequencyCheckboxList}
+          switcherList={extremeSwitcherList}
         />
-        <div className={styles.checkboxContainer}>
-          <Checkbox checkbox={lowFrequentCheckBox} />
-          <Checkbox checkbox={middleFrequentCheckBox} />
-          <Checkbox checkbox={highFrequentCheckBox} />
-
-          <Checkbox checkbox={maxFrequentCheckBox} />
-        </div>
-      </>
-    )
+        <ArrangeNodesLayout arrangeNodesFromGroup={arrangeNodesFromGroup} />
+        <InformationSnack />
+      </Grid>
+    </Grid>
   );
 };
+
+const useStyles = makeStyles((theme) => ({
+  mainGrid: {
+    background: theme.palette.background.default,
+    flexFlow: "row wrap",
+    justifyContent: "center",
+    alignItems: "center",
+
+    [theme.breakpoints.down("md")]: {
+      flexDirection: "column",
+    },
+  },
+  chartRoot: {
+    height: "92vh",
+    width: "65vw",
+    margin: `${theme.spacing(4)}px 0`,
+
+    [theme.breakpoints.down("sm")]: {
+      width: "85vw",
+    },
+  },
+  toolBarContainer: {
+    flexFlow: "column wrap",
+    width: "30vw",
+    height: "92vh",
+    background: "rgb(0 0 0 / 40%)",
+    "& > h6": {
+      width: "90%",
+    },
+
+    [theme.breakpoints.down("md")]: {
+      flexDirection: "row",
+      width: "65vw",
+      marginBottom: theme.spacing(4),
+      justifyContent: "center",
+      height: "fit-content",
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      width: "85vw",
+    },
+  },
+  formGroupFrequrncy: {
+    display: "flex",
+    flexWrap: "wrap",
+    flexDirection: "column",
+    marginLeft: theme.spacing(8),
+    color: theme.palette.primary.contrastText,
+    marginBottom: "2vw",
+  },
+
+  switchGrid: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 export default App;
