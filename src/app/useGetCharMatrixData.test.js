@@ -42,7 +42,7 @@ describe("mocking axios request", () => {
     moxios.uninstall();
   });
 
-  it("fetches data from URL successfully", (done) => {
+  it("fetches data from URL and returns successful response", (done) => {
     const mockedfetchCharMatrixData = jest.fn();
     hooks.useGetCharMatrixData = jest.fn().mockReturnValue({
       fetchCharMatrixData: mockedfetchCharMatrixData,

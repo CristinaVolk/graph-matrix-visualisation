@@ -2,8 +2,8 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { renderHook } from "@testing-library/react-hooks";
 
-import { useFilterLinks } from "./../app/useFilterLinks";
 import { FrequencyComponentList } from "./FrequencyComponentList";
+import { useFilterLinks } from "./../app/useFilterLinks";
 
 const component = (checkboxList, switcherList) => (
   <FrequencyComponentList
@@ -16,7 +16,7 @@ describe("FrequencyComponentList component", () => {
   const { result } = renderHook(() => useFilterLinks());
   const { frequencyCheckboxList, extremeSwitcherList } = result.current;
 
-  it("renders the custom hook and CustomSwitch component with the maximum toogler", () => {
+  it("renders the title and list of checkboxes and switchers", () => {
     const { getByText, getAllByRole, getAllByLabelText } = render(
       component(frequencyCheckboxList, extremeSwitcherList),
     );
