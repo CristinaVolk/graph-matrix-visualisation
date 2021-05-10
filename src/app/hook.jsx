@@ -66,14 +66,14 @@ export function useComponent() {
     [chartContent.items],
   );
 
-  const arrangeNodesFromGroup = (groupNumber) => {
+  const arrangeNodesFromGroup = async (groupNumber) => {
     chartRef.current &&
-      chartRef.current.component.arrange(
+      (await chartRef.current.component.arrange(
         "circle",
         nodeIdsToArrange(groupNumber),
         arrangeOptions,
         chartRef.current.component.zoom("fit", zoomOptions),
-      );
+      ));
   };
 
   useEffect(() => {
