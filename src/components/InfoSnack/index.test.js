@@ -2,8 +2,8 @@ import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import { act } from "@testing-library/react-hooks";
 
-import { InformationSnack } from ".";
 import * as hooks from "./hook";
+import { InformationSnack } from ".";
 
 describe("InfoSnack component", () => {
   it("opens the SnackContent message once the button is clicked", async () => {
