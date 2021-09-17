@@ -16,7 +16,7 @@ The graph represents the character co-occurrences in Victor Hugo’s Le
 
 ### Arranging nodes:
 
-The function applies to the chapters that has more than 2 nodes, based on this assumption, the chapters № 6 and 9 have not been included in the toolbar.
+The function applies to the chapters that have more than 2 nodes, based on this assumption, the chapters № 6 and 9 have not been included in the toolbar.
 
 Analysing the network using the switchers to show the maximum co-occurrence allows the users to conclude who is the main character of the book. Filtering by frequency checkboxes let the users realize who are less/more important figures in the novel. Surreally to understand now developing the application sitting in the cafe named Victor Hugo.
 
