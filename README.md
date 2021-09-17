@@ -1,6 +1,6 @@
  # General
 
-The graph represents the character co-occurrences in Victor Hugo’s Les Misérables. Each colloured node represents two name or surname that appeared in the same chapter;The width of the links indicate the frequency of the characters. The colour of the nodes define the chapter of the book.
+The graph represents the character co-occurrences in Victor Hugo’s Les Misérables. Each coloured node represents two characters that appeared in the same chapter; The width of the links indicates the frequency of the characters. The colour of the nodes defines the chapter of the book.
 
 ### Filter:
 
@@ -10,15 +10,15 @@ The graph represents the character co-occurrences in Victor Hugo’s Le
 
 ### Show Max and Min values:
 
-1. Toogling the Max switcher presents the results in red circles. Important to notice that it circles all the nodes that has at least one link of the highest value in the set selected of low/middle/high frequency.
+1. Toggling the Max switcher presents the results in red circles. Important to notice that it circles all the nodes that has at least one link of the highest value in the set selected of low/middle/high frequency.
 
-2. Toogling the Min switcher presents the results in light-blue circles. Important to notice that it circles all the nodes that has at least one link of the smallest value in the set selected of low/middle/high frequency.
+2. Toggling the Min switcher presents the results in light-blue circles. Important to notice that it circles all the nodes that has at least one link of the smallest value in the set selected of low/middle/high frequency.
 
 ### Arranging nodes:
 
-The function applies to the chapters that has more than 2 nodes. based on this assumption, the chapters № 6 and 9 have not been included in the toolbar.
+The function applies to the chapters that has more than 2 nodes, based on this assumption, the chapters № 6 and 9 have not been included in the toolbar.
 
-Analysing the network using the switchers to show the maximum co-occurrence it allows the users to conclude who is the main character of the book. Filtering by freqency checkboxes let the users realize who are less/more important figures in the novel. Surreally to understand now developing the application sitting in the cafe named Victor Hugo.
+Analysing the network using the switchers to show the maximum co-occurrence allows the users to conclude who is the main character of the book. Filtering by frequency checkboxes let the users realize who are less/more important figures in the novel. Surreally to understand now developing the application sitting in the cafe named Victor Hugo.
 
 ## Tecnhology:
 
